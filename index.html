@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NJ Budget Briefing | FY 2027</title>
+  <meta name="description" content="Interactive New Jersey budget briefing with key numbers, storylines, searchable topics, and a chat interface for reader questions." />
+  <style>
+    :root{
+      --bg:#f5f5f3;
+      --panel:#ffffff;
+      --panel-2:#fafaf8;
+      --text:#181818;
+      --muted:#5e5e5e;
+      --gold:#c0d22d;
+      --blue:#0b57d0;
+      --line:rgba(0,0,0,.10);
+      --green:#15803d;
+      --red:#b91c1c;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --radius:18px;
+      --max:1260px;
+      --nj-dark:#555756;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font:16px/1.6 Georgia,"Times New Roman",serif;
+      color:var(--text);
+      background:
+        linear-gradient(180deg,#ffffff 0,#f7f7f5 220px,var(--bg) 220px);
+    }
+    a{color:#0b57d0;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter: blur(10px);
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+    .topbar-inner{
+      max-width:var(--max);margin:0 auto;padding:10px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{display:flex;align-items:center;gap:16px;min-width:0}
+    .brand img{display:block;height:46px;width:auto;max-width:min(62vw,320px);border-radius:4px}
+    .brand-text{font:700 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#222;letter-spacing:.01em}
+    .brand-text span{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
+    .nav{display:flex;flex-wrap:wrap;gap:14px}
+    .nav a{font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#4e4e4e}
+    .hero{
+      padding:36px 0 20px;
+      display:grid;grid-template-columns:1.3fr .9fr;gap:22px;
+      align-items:stretch;
+    }
+    .hero-card,.card{
+      background:var(--panel);
+      border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-card{padding:28px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 11px;border:1px solid rgba(192,210,45,.45);border-radius:999px;
+      color:#556000;background:rgba(192,210,45,.12);font:700 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    h1{margin:14px 0 12px;font-size:clamp(34px,5vw,58px);line-height:1.01;letter-spacing:-1.1px;font-weight:700}
+    .sub{
+      max-width:66ch;color:#333;font-size:18px;margin:0 0 18px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    .meta{
+      display:flex;flex-wrap:wrap;gap:10px;margin-top:12px
+    }
+    .pill{
+      font:600 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:8px 12px;border-radius:999px;
+      border:1px solid var(--line);color:#444;background:#fafaf8
+    }
+    /* ... more CSS ... */
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="data:image/jpeg;base64,[very long embedded logo data omitted]" alt="NJ.com True Jersey logo" />
+        <div class="brand-text">New Jersey Budget Briefing<span>Interactive guide and reader Q&amp;A</span></div>
+      </div>
+      <nav class="nav">
+        <a href="#numbers">Big numbers</a>
+        <a href="#storylines">Storylines</a>
+        <a href="#topics">Topic explorer</a>
+        <a href="#chat">Reader chat</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Budget in Brief • FY 2027 • New Jersey</div>
+        <h1>What matters most in the governor’s budget</h1>
+        <p class="sub">
+          A reader-friendly guide to the biggest numbers, policy shifts, and political fault lines in the
+          Sherrill administration’s first budget proposal, built from the state’s Budget in Brief.
+        </p>
+        <div class="meta">
+          <div class="pill">Appropriations: $60.7B</div>
+          <div class="pill">Revenues: $59.1B</div>
+          <div class="pill">Projected surplus: $5.364B</div>
+          <div class="pill">Property-tax relief: $28.735B</div>
+        </div>
+      </div>
+      <aside class="hero-card hero-side">
+        <div class="side-head">Top newsroom angles</div>
+        <ul class="lede-list">
+          <li>Nearly $2 billion in spending cuts paired with targeted new investments.</li>
+          <li>Property-tax relief remains massive, but Stay NJ is tightened for wealthier seniors.</li>
+          <li>Record school funding and pre-K money sit alongside a new school-based mental health push.</li>
+          <li>Health-care costs, Medicaid pressure, and federal policy changes are recurring risk points.</li>
+          <li>More than $1 billion in state support is proposed for NJ Transit.</li>
+        </ul>
+        <div class="note">
+          This page is based on the uploaded <strong>FY 2027 Budget in Brief</strong>, even though the upload note described it as the 2026 budget.
+        </div>
+      </aside>
+    </section>
+
+    <section id="numbers">
+      <div class="section-head">
+        <div>
+          <h2>Big numbers at a glance</h2>
+          <div class="section-deck">The fastest way for readers to understand the scale of the proposal and where the biggest spending and policy signals sit.</div>
+        </div>
+      </div>
+      <div class="grid" id="statsGrid"></div>
+    </section>
+
+    <section id="storylines">
+      <div class="section-head">
+        <div>
+          <h2>Most newsworthy storylines</h2>
+          <div class="section-deck">Not just line items. These are the sections most likely to drive headlines, follow-ups, and accountability reporting.</div>
+        </div>
+      </div>
+      <div class="stories" id="storiesGrid"></div>
+    </section>
+
+    <section id="topics">
+      <div class="section-head">
+        <div>
+          <h2>Topic explorer</h2>
+          <div class="section-deck">Readers can filter by subject and scan the key figures, claims, and stakes for each part of the budget.</div>
+        </div>
+      </div>
+      <div class="explorer">
+        <aside class="card filter-card">
+          <label class="label" for="searchInput">Search this budget page</label>
+          <input class="input" id="searchInput" type="search" placeholder="Search: school aid, Medicaid, housing, transit..." />
+          <div style="height:14px"></div>
+          <label class="label" for="topicSelect">Filter topic</label>
+          <select class="select" id="topicSelect">
+            <option value="all">All topics</option>
+            <option value="taxes">Taxes</option>
+            <option value="education">Education</option>
+            <option value="health">Health care</option>
+            <option value="transit">Transit</option>
+            <option value="housing">Housing</option>
+            <option value="public-safety">Public safety</option>
+          </select>
+        </aside>
+        <div class="topic-grid" id="topicGrid"></div>
+      </div>
+    </section>
+
+    <section id="chat">
+      <div class="section-head">
+        <div>
+          <h2>Ask about the budget</h2>
+          <div class="section-deck">Reader-facing Q&amp;A using the ChatGPT API through a secure proxy endpoint.</div>
+        </div>
+      </div>
+      <div class="chat-wrap">
+        <aside class="card chat-config">
+          <div class="label">Proxy endpoint</div>
+          <input class="input" id="proxyUrl" placeholder="Paste your Worker URL here" />
+          <div style="height:10px"></div>
+          <div class="tiny">Use a server-side proxy or Cloudflare Worker so your API key is never exposed in GitHub Pages.</div>
+        </aside>
+        <div class="card chat-card">
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-row">
+            <textarea id="chatInput" rows="3" placeholder="Ask a question about school aid, taxes, pensions, Medicaid, property-tax relief, or anything else in the budget..."></textarea>
+            <button class="btn" id="sendBtn">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head">
+        <div>
+          <h2>Source notes</h2>
+          <div class="section-deck">What this package is built from and how readers should interpret it.</div>
+        </div>
+      </div>
+      <div class="source-list" id="sourceList"></div>
+    </section>
+  </main>
+
+  <script>
+    const stats = [
+      { label: "Total budget", value: "$60.7B", desc: "Proposed FY 2027 appropriations.", delta: "Largest top-line number readers will look for first." },
+      { label: "Revenues", value: "$59.1B", desc: "Anticipated total resources supporting the plan.", delta: "Key test for sustainability and one-year balance." },
+      { label: "Surplus", value: "$5.364B", desc: "Projected ending surplus.", delta: "Important cushion, but lower than peak-era reserves." },
+      { label: "Property-tax relief", value: "$28.735B", desc: "Includes ANCHOR, school aid, municipal aid, and senior relief programs.", delta: "Central affordability message in the budget." }
+    ];
+
+    const stories = [
+      {
+        title: "Austerity with selective expansion",
+        body: "The budget pitches roughly $2 billion in spending reductions while preserving or expanding politically sensitive priorities like school aid, transit, pensions, and property-tax relief.",
+        why: "This is the core governing frame and likely the lead of any statewide budget story.",
+        source: "Budget summary and narrative sections."
+      },
+      {
+        title: "School funding hits a new high",
+        body: "The proposal continues fully funding the K-12 formula while pairing that with pre-K growth and mental-health initiatives tied to schools.",
+        why: "Large statewide impact with district-level follow-ups for local coverage.",
+        source: "Education sections and headline budget tables."
+      }
+      // ... more data objects ...
+    ];
+
+    function renderStats() {
+      const el = document.getElementById('statsGrid');
+      el.innerHTML = stats.map(item => `
+        <article class="card stat">
+          <div class="label">${item.label}</div>
+          <div class="value">${item.value}</div>
+          <div class="desc">${item.desc}</div>
+          <div class="delta">${item.delta}</div>
+        </article>
+      `).join('');
+    }
+
+    async function sendChat() {
+      const input = document.getElementById('chatInput');
+      const proxy = document.getElementById('proxyUrl').value.trim();
+      if (!proxy || !input.value.trim()) return;
+      // fetch to your proxy endpoint goes here
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', sendChat);
+    renderStats();
+  </script>
+</body>
+</html>
