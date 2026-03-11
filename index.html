@@ -155,9 +155,10 @@ header {
   border-bottom: 1px solid var(--nj-mid);
   padding: 0 24px;
   position: sticky;
-  top: 72px;
+  top: 72px; /* fallback, overridden by JS */
   z-index: 90;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: top 0.15s;
 }
 .cat-nav-inner {
   max-width: 1200px;
@@ -319,20 +320,88 @@ footer {
 }
 footer a { color: var(--nj-lime); text-decoration: none; }
 /* RESPONSIVE */
+@media (max-width: 1024px) {
+  .cards { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
 @media (max-width: 768px) {
-  .header-inner { flex-direction: column; gap: 12px; }
+  header { position: sticky; top: 0; }
+  .header-inner {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+  .logo-area { width: 100%; justify-content: space-between; }
   .search-wrap { width: 100%; }
-  .hero { padding: 36px 16px 32px; }
-  .hero-stats { gap: 24px; }
-  .hero-stat .num { font-size: 28px; }
-  .cards { grid-template-columns: 1fr; }
-  .main { padding: 20px 16px 60px; }
-  .cat-nav-inner button { padding: 12px 12px; font-size: 12px; }
+  .search-wrap input { padding: 10px 14px 10px 36px; font-size: 16px; /* prevents iOS zoom */ }
+  .hero { padding: 32px 16px 28px; }
+  .hero h1 { font-size: 28px; }
+  .hero .subtitle { font-size: 15px; margin-bottom: 20px; }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 12px;
+    max-width: 320px;
+    margin: 8px auto 0;
+  }
+  .hero-stat .num { font-size: 26px; }
+  .hero-stat .label { font-size: 10px; letter-spacing: 1px; }
+  .cat-nav {
+    padding: 0 8px;
+    /* fade hint for scroll */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 24px), transparent);
+  }
+  .cat-nav-inner {
+    gap: 0;
+    padding: 0 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-nav-inner button {
+    padding: 12px 14px;
+    font-size: 12px;
+    scroll-snap-align: start;
+    min-height: 44px; /* touch target */
+  }
+  .main { padding: 20px 12px 60px; }
+  .cards { grid-template-columns: 1fr; gap: 14px; }
+  .card { padding: 18px 16px; }
+  .card h3 { font-size: 15px; }
+  .card .figure { font-size: 20px; }
+  .card p { font-size: 13px; }
+  .card table { font-size: 12px; }
+  .card table td { padding: 5px 0; }
+  .section-header { margin-bottom: 14px; padding-bottom: 10px; }
+  .section-header h2 { font-size: 22px; }
+  .section-icon { width: 34px; height: 34px; font-size: 17px; }
+  .budget-section { margin-bottom: 36px; scroll-margin-top: 120px; }
+  footer { padding: 24px 16px; font-size: 12px; }
 }
 @media (max-width: 480px) {
+  .header-inner { padding: 8px 12px; }
   .logo-area img { height: 36px; }
-  .header-label { font-size: 10px; }
+  .header-label { font-size: 9px; letter-spacing: 1.5px; padding-left: 10px; }
+  .header-label span { font-size: 9px; }
+  .hero { padding: 24px 12px 22px; }
+  .hero h1 { font-size: 24px; margin-bottom: 8px; }
+  .hero .subtitle { font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .hero-stats { max-width: 280px; gap: 12px 8px; }
+  .hero-stat .num { font-size: 22px; }
+  .cat-nav-inner button { padding: 10px 10px; font-size: 11px; }
+  .main { padding: 16px 10px 48px; }
+  .card { padding: 16px 14px; border-left-width: 3px; }
+  .card .figure { font-size: 18px; }
+  .section-header h2 { font-size: 20px; }
+  .budget-section { scroll-margin-top: 100px; }
 }
+/* Touch & embed improvements */
+@media (hover: none) and (pointer: coarse) {
+  .card:hover { transform: none; box-shadow: var(--shadow); }
+  .cat-nav-inner button { -webkit-tap-highlight-color: transparent; }
+}
+/* Ensure good rendering in iframes */
+html { overflow-x: hidden; }
+body { min-width: 0; overflow-x: hidden; }
 .hidden { display: none !important; }
 </style>
 </head>
@@ -880,6 +949,24 @@ footer a { color: var(--nj-lime); text-decoration: none; }
 
 <script>
 // Category navigation
+// Dynamic sticky nav positioning
+function updateNavPosition() {
+  const header = document.querySelector('header');
+  const catNav = document.querySelector('.cat-nav');
+  if (header && catNav) {
+    catNav.style.top = header.offsetHeight + 'px';
+  }
+  // Update scroll-margin-top for sections
+  const totalSticky = (header ? header.offsetHeight : 0) + (catNav ? catNav.offsetHeight : 0) + 16;
+  document.querySelectorAll('.budget-section').forEach(s => {
+    s.style.scrollMarginTop = totalSticky + 'px';
+  });
+}
+updateNavPosition();
+window.addEventListener('resize', updateNavPosition);
+// Re-check after fonts load
+if (document.fonts) document.fonts.ready.then(updateNavPosition);
+
 const catButtons = document.querySelectorAll('.cat-nav-inner button');
 const sections = document.querySelectorAll('.budget-section');
 const searchInput = document.getElementById('searchInput');
@@ -898,8 +985,15 @@ catButtons.forEach(btn => {
       sections.forEach(s => {
         s.classList.toggle('hidden', s.dataset.category !== cat);
       });
+      // Scroll to first visible section on mobile
+      const first = document.querySelector('.budget-section:not(.hidden)');
+      if (first && window.innerWidth <= 768) {
+        setTimeout(() => first.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
     }
     noResults.style.display = 'none';
+    // Scroll active nav button into view
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   });
 });
 
@@ -907,37 +1001,41 @@ function showAllCards() {
   document.querySelectorAll('.card').forEach(c => c.classList.remove('hidden'));
 }
 
-// Search functionality
+// Search functionality with debounce for mobile performance
+let searchTimer;
 searchInput.addEventListener('input', () => {
-  const query = searchInput.value.toLowerCase().trim();
-  if (!query) {
-    sections.forEach(s => s.classList.remove('hidden'));
-    showAllCards();
-    noResults.style.display = 'none';
-    const activeBtn = document.querySelector('.cat-nav-inner button.active');
-    if (activeBtn && activeBtn.dataset.cat !== 'all') {
-      activeBtn.click();
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const query = searchInput.value.toLowerCase().trim();
+    if (!query) {
+      sections.forEach(s => s.classList.remove('hidden'));
+      showAllCards();
+      noResults.style.display = 'none';
+      const activeBtn = document.querySelector('.cat-nav-inner button.active');
+      if (activeBtn && activeBtn.dataset.cat !== 'all') {
+        activeBtn.click();
+      }
+      return;
     }
-    return;
-  }
-  // Reset category to all
-  catButtons.forEach(b => b.classList.remove('active'));
-  catButtons[0].classList.add('active');
-  sections.forEach(s => s.classList.remove('hidden'));
+    // Reset category to all
+    catButtons.forEach(b => b.classList.remove('active'));
+    catButtons[0].classList.add('active');
+    sections.forEach(s => s.classList.remove('hidden'));
 
-  let anyVisible = false;
-  document.querySelectorAll('.card').forEach(card => {
-    const text = (card.textContent + ' ' + (card.dataset.search || '')).toLowerCase();
-    const match = query.split(/\s+/).every(term => text.includes(term));
-    card.classList.toggle('hidden', !match);
-    if (match) anyVisible = true;
-  });
-  // Hide sections with no visible cards
-  sections.forEach(s => {
-    const visibleCards = s.querySelectorAll('.card:not(.hidden)');
-    s.classList.toggle('hidden', visibleCards.length === 0);
-  });
-  noResults.style.display = anyVisible ? 'none' : 'block';
+    let anyVisible = false;
+    document.querySelectorAll('.card').forEach(card => {
+      const text = (card.textContent + ' ' + (card.dataset.search || '')).toLowerCase();
+      const match = query.split(/\s+/).every(term => text.includes(term));
+      card.classList.toggle('hidden', !match);
+      if (match) anyVisible = true;
+    });
+    // Hide sections with no visible cards
+    sections.forEach(s => {
+      const visibleCards = s.querySelectorAll('.card:not(.hidden)');
+      s.classList.toggle('hidden', visibleCards.length === 0);
+    });
+    noResults.style.display = anyVisible ? 'none' : 'block';
+  }, 150);
 });
 </script>
 </body>
