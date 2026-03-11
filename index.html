@@ -1,732 +1,943 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NJ Budget Briefing | FY 2027</title>
-  <meta name="description" content="Interactive New Jersey budget briefing with key numbers, storylines, topic filters, and reader chat." />
-  <style>
-    :root{
-      --bg:#f5f5f3;
-      --panel:#ffffff;
-      --panel-2:#fafaf8;
-      --text:#181818;
-      --muted:#5e5e5e;
-      --gold:#c0d22d;
-      --blue:#0b57d0;
-      --line:rgba(0,0,0,.10);
-      --green:#15803d;
-      --shadow:0 10px 24px rgba(0,0,0,.08);
-      --radius:18px;
-      --max:1260px;
-      --nj-dark:#555756;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font:16px/1.6 Georgia,"Times New Roman",serif;
-      color:var(--text);
-      background:linear-gradient(180deg,#ffffff 0,#f7f7f5 220px,var(--bg) 220px);
-    }
-    a{color:var(--blue);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
-    .topbar{
-      position:sticky;top:0;z-index:20;
-      backdrop-filter: blur(10px);
-      background:rgba(255,255,255,.94);
-      border-bottom:1px solid rgba(0,0,0,.08);
-    }
-    .topbar-inner{
-      max-width:var(--max);margin:0 auto;padding:10px 24px;
-      display:flex;align-items:center;justify-content:space-between;gap:16px;
-    }
-    .brand{display:flex;align-items:center;gap:16px;min-width:0}
-    .brand img{display:block;height:46px;width:auto;max-width:min(62vw,320px)}
-    .brand-text{
-      font:700 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:#222;letter-spacing:.01em
-    }
-    .brand-text span{
-      display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px
-    }
-    .nav{display:flex;flex-wrap:wrap;gap:14px}
-    .nav a{
-      font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:#4e4e4e
-    }
-
-    .hero{
-      padding:36px 0 20px;
-      display:grid;grid-template-columns:1.3fr .9fr;gap:22px;
-      align-items:stretch;
-    }
-    .hero-card,.card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-    .hero-card{padding:28px}
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:7px 11px;border:1px solid rgba(192,210,45,.45);
-      border-radius:999px;color:#556000;background:rgba(192,210,45,.12);
-      font:700 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
-    h1{
-      margin:14px 0 12px;
-      font-size:clamp(34px,5vw,58px);
-      line-height:1.01;
-      letter-spacing:-1.1px;
-      font-weight:700
-    }
-    .sub{
-      max-width:66ch;color:#333;font-size:18px;margin:0 0 18px;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
-    .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-    .pill{
-      font:600 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding:8px 12px;border-radius:999px;border:1px solid var(--line);
-      color:#444;background:#fafaf8
-    }
-    .hero-side{padding:22px;display:grid;gap:14px}
-    .side-head{
-      font:800 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      text-transform:uppercase;letter-spacing:.12em;color:#6a7300
-    }
-    .lede-list{margin:0;padding-left:18px;color:#252525}
-    .lede-list li{margin:.45rem 0}
-    .note{
-      color:var(--muted);
-      font:500 13px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      border-top:1px dashed var(--line);
-      padding-top:12px
-    }
-
-    section{padding:18px 0 6px}
-    .section-head{
-      display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:14px
-    }
-    h2{font-size:28px;letter-spacing:-.5px;margin:0}
-    .section-deck{
-      color:var(--muted);max-width:72ch;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
-    }
-
-    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-    .stat{padding:18px}
-    .label{
-      font:700 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      text-transform:uppercase;letter-spacing:.08em;color:var(--muted)
-    }
-    .value{
-      font-size:34px;line-height:1;font-weight:800;margin:10px 0 6px;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
-    }
-    .desc{
-      color:#343434;
-      font:500 14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
-    }
-    .delta{
-      margin-top:10px;
-      font:600 13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--blue)
-    }
-
-    .bars{display:grid;gap:14px}
-    .bar-card{padding:18px}
-    .bar-row{margin:10px 0 0}
-    .bar-top{
-      display:flex;justify-content:space-between;gap:12px;align-items:center;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
-    }
-    .bar-track{
-      height:13px;background:#ecece6;border-radius:999px;overflow:hidden;margin-top:8px
-    }
-    .bar-fill{
-      height:100%;
-      background:linear-gradient(90deg,#768352,#c0d22d);
-      border-radius:999px
-    }
-
-    .stories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .story{padding:20px}
-    .story h3{margin:2px 0 10px;font-size:20px}
-    .why{
-      font:800 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      letter-spacing:.06em;text-transform:uppercase;color:#6a7300;margin-top:14px
-    }
-    .sources{
-      font:500 12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)
-    }
-
-    .explorer{display:grid;grid-template-columns:300px 1fr;gap:16px}
-    .filter-card{padding:18px;position:sticky;top:72px;height:fit-content}
-    .input,.select,textarea{
-      width:100%;background:#fff;color:var(--text);
-      border:1px solid #d8d8d2;border-radius:12px;padding:12px 14px;outline:none;
-      font:500 15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
-    }
-    .input:focus,.select:focus,textarea:focus{
-      border-color:#77a9ff;box-shadow:0 0 0 3px rgba(59,130,246,.18)
-    }
-    .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .topic{padding:18px}
-    .topic h3{margin:4px 0 8px;font-size:20px}
-    .topic ul{margin:0;padding-left:18px;color:#252525}
-    .topic li{margin:.32rem 0}
-    .topic .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    .tag{
-      font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding:6px 9px;border-radius:999px;background:#f2f6ff;border:1px solid #d6e2ff;color:#21498a
-    }
-
-    .chat-wrap{
-      display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start
-    }
-    .chat-config,.chat-card{padding:18px}
-    .chat-log{
-      background:#fcfcfb;border:1px solid var(--line);border-radius:16px;
-      min-height:430px;max-height:62vh;overflow:auto;padding:16px
-    }
-    .msg{padding:12px 14px;border-radius:14px;margin-bottom:12px;max-width:90%}
-    .user{background:#eef4ff;margin-left:auto;border:1px solid #d4e1ff}
-    .assistant{background:#fff;border:1px solid var(--line)}
-    .msg small{display:block;color:var(--muted);margin-bottom:6px}
-    .chat-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}
-    .btn{
-      border:0;border-radius:12px;padding:12px 16px;
-      font:800 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      cursor:pointer;background:linear-gradient(135deg,#66714f,#555756);color:white;box-shadow:var(--shadow)
-    }
-    .btn.secondary{
-      background:#fff;border:1px solid var(--line);color:var(--text);box-shadow:none
-    }
-    .tiny{
-      font:500 12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--muted)
-    }
-
-    .source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .source-item{padding:14px}
-    .kicker{
-      font:800 11px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      letter-spacing:.08em;text-transform:uppercase;color:#6a7300
-    }
-
-    .footer{
-      color:var(--muted);
-      font:500 13px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding:30px 0 50px
-    }
-
-    @media (max-width:1080px){
-      .hero,.chat-wrap,.explorer{grid-template-columns:1fr}
-      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .stories{grid-template-columns:1fr 1fr}
-      .topic-grid{grid-template-columns:1fr}
-      .filter-card{position:static}
-    }
-    @media (max-width:820px){
-      .wrap,.topbar-inner{padding:16px}
-      .grid,.stories,.source-list{grid-template-columns:1fr}
-      .nav{display:none}
-      .brand img{height:38px;max-width:62vw}
-      .brand-text{display:none}
-      .hero{padding-top:22px}
-      .hero-card,.chat-card,.chat-config,.filter-card,.story,.topic,.stat,.bar-card{padding:16px}
-      .value{font-size:30px}
-      .chat-row{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Jersey FY2027 Budget Dashboard | NJ.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --nj-dark: #4a4a4a;
+  --nj-darker: #333333;
+  --nj-darkest: #1a1a1a;
+  --nj-lime: #B5CC18;
+  --nj-lime-dark: #98ab0f;
+  --nj-white: #ffffff;
+  --nj-light: #f4f4f4;
+  --nj-mid: #e0e0e0;
+  --nj-text: #2d2d2d;
+  --nj-muted: #777;
+  --nj-red: #d32f2f;
+  --nj-green: #388e3c;
+  --nj-blue: #1565c0;
+  --card-radius: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--nj-light);
+  color: var(--nj-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* HEADER */
+header {
+  background: var(--nj-dark);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+}
+.logo-area { display: flex; align-items: center; gap: 16px; }
+.logo-area img { height: 48px; }
+.header-label {
+  color: var(--nj-lime);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  border-left: 2px solid var(--nj-lime);
+  padding-left: 14px;
+  line-height: 1.3;
+}
+.header-label span { display: block; color: #ccc; font-weight: 400; letter-spacing: 1px; }
+/* SEARCH */
+.search-wrap {
+  position: relative;
+  width: 320px;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid #666;
+  border-radius: 24px;
+  background: var(--nj-darker);
+  color: var(--nj-white);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-wrap input::placeholder { color: #999; }
+.search-wrap input:focus { border-color: var(--nj-lime); }
+.search-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  fill: #999;
+}
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--nj-darkest) 0%, var(--nj-dark) 50%, #3a4a2a 100%);
+  color: var(--nj-white);
+  padding: 56px 24px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(181,204,24,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  position: relative;
+}
+.hero h1 span { color: var(--nj-lime); }
+.hero .subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  color: #ccc;
+  max-width: 640px;
+  margin: 0 auto 28px;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat .num {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--nj-lime);
+  line-height: 1;
+}
+.hero-stat .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #aaa;
+  margin-top: 4px;
+}
+/* NAV */
+.cat-nav {
+  background: var(--nj-white);
+  border-bottom: 1px solid var(--nj-mid);
+  padding: 0 24px;
+  position: sticky;
+  top: 72px;
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.cat-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.cat-nav-inner::-webkit-scrollbar { display: none; }
+.cat-nav-inner button {
+  flex-shrink: 0;
+  padding: 14px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nj-muted);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.cat-nav-inner button:hover { color: var(--nj-text); }
+.cat-nav-inner button.active {
+  color: var(--nj-text);
+  border-bottom-color: var(--nj-lime);
+}
+/* MAIN */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+/* SECTION */
+.budget-section {
+  margin-bottom: 48px;
+  scroll-margin-top: 140px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--nj-mid);
+}
+.section-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--nj-darkest);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nj-darkest);
+}
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--nj-white);
+  border-radius: var(--card-radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--nj-lime);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nj-darkest);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.65;
+}
+.card .figure {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--nj-darkest);
+  margin: 8px 0;
+  line-height: 1;
+}
+.card .figure.green { color: var(--nj-green); }
+.card .figure.red { color: var(--nj-red); }
+.card .figure.blue { color: var(--nj-blue); }
+.card .tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+.tag-new { background: #e8f5e9; color: #2e7d32; }
+.tag-increase { background: #e3f2fd; color: #1565c0; }
+.tag-cut { background: #fce4ec; color: #c62828; }
+.tag-reform { background: #fff3e0; color: #e65100; }
+.tag-federal { background: #f3e5f5; color: #7b1fa2; }
+/* WIDE CARD */
+.card-wide {
+  grid-column: 1 / -1;
+}
+/* DATA TABLE INSIDE CARD */
+.card table {
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.card table td {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+.card table td:last-child {
+  text-align: right;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* NO RESULTS */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--nj-muted);
+  font-size: 16px;
+  display: none;
+}
+/* FOOTER */
+footer {
+  background: var(--nj-darkest);
+  color: #999;
+  text-align: center;
+  padding: 32px 24px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+footer a { color: var(--nj-lime); text-decoration: none; }
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; gap: 12px; }
+  .search-wrap { width: 100%; }
+  .hero { padding: 36px 16px 32px; }
+  .hero-stats { gap: 24px; }
+  .hero-stat .num { font-size: 28px; }
+  .cards { grid-template-columns: 1fr; }
+  .main { padding: 20px 16px 60px; }
+  .cat-nav-inner button { padding: 12px 12px; font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .logo-area img { height: 36px; }
+  .header-label { font-size: 10px; }
+}
+.hidden { display: none !important; }
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <img src="njdotcom-logo.jpg" alt="NJ.com True Jersey logo" />
-        <div class="brand-text">New Jersey Budget Briefing<span>Interactive guide and reader Q&amp;A</span></div>
-      </div>
-      <nav class="nav">
-        <a href="#numbers">Big numbers</a>
-        <a href="#bars">Budget bars</a>
-        <a href="#storylines">Storylines</a>
-        <a href="#topics">Topic explorer</a>
-        <a href="#chat">Reader chat</a>
-        <a href="#sources">Sources</a>
-      </nav>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-area">
+      <img src="data:image/jpeg;base64,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qpmqqZ3mZnnMhlmnFjiNnPEDN4v4yZw2XWap9iYKirei391P2VU+X4NoYUAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k=" alt="NJ.com">
+      <div class="header-label">Budget Dashboard<span>Fiscal Year 2027</span></div>
     </div>
-  </header>
-
-  <main class="wrap">
-    <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">Budget in Brief • FY 2027 • New Jersey</div>
-        <h1>What matters most in the governor’s budget</h1>
-        <p class="sub">
-          A reader-friendly guide to the biggest numbers, policy shifts, and political fault lines in the
-          state budget proposal, built for readers who want the fastest path to what matters.
-        </p>
-        <div class="meta">
-          <div class="pill">Appropriations: $60.7B</div>
-          <div class="pill">Revenues: $59.1B</div>
-          <div class="pill">Projected surplus: $5.364B</div>
-          <div class="pill">Property-tax relief: $28.735B</div>
-        </div>
-      </div>
-
-      <aside class="hero-card hero-side">
-        <div class="side-head">Top newsroom angles</div>
-        <ul class="lede-list">
-          <li>Nearly $2 billion in spending cuts paired with targeted new investments.</li>
-          <li>Property-tax relief stays huge, but senior relief is tightened for some higher-income residents.</li>
-          <li>Record school funding remains a central political and local-news storyline.</li>
-          <li>Health-care costs and Medicaid pressure remain major structural risks.</li>
-          <li>NJ Transit support stays a major affordability and mobility story.</li>
-        </ul>
-        <div class="note">
-          This page is built around the uploaded Budget in Brief document and labels it as FY 2027.
-        </div>
-      </aside>
-    </section>
-
-    <section id="numbers">
-      <div class="section-head">
-        <div>
-          <h2>Big numbers at a glance</h2>
-          <div class="section-deck">The fastest way for readers to understand the scale of the proposal and where the biggest headlines sit.</div>
-        </div>
-      </div>
-      <div class="grid" id="statsGrid"></div>
-    </section>
-
-    <section id="bars">
-      <div class="section-head">
-        <div>
-          <h2>Budget figures in context</h2>
-          <div class="section-deck">Visual comparisons for major figures readers will ask about first.</div>
-        </div>
-      </div>
-      <div class="bars" id="barsGrid"></div>
-    </section>
-
-    <section id="storylines">
-      <div class="section-head">
-        <div>
-          <h2>Most newsworthy storylines</h2>
-          <div class="section-deck">These are the sections most likely to drive headlines, follow-ups, and accountability reporting.</div>
-        </div>
-      </div>
-      <div class="stories" id="storiesGrid"></div>
-    </section>
-
-    <section id="topics">
-      <div class="section-head">
-        <div>
-          <h2>Topic explorer</h2>
-          <div class="section-deck">Readers can filter by subject and scan the key figures, stakes, and likely local-news follow-ups.</div>
-        </div>
-      </div>
-      <div class="explorer">
-        <aside class="card filter-card">
-          <label class="label" for="searchInput">Search this page</label>
-          <input class="input" id="searchInput" type="search" placeholder="Search: school aid, Medicaid, housing, transit..." />
-          <div style="height:14px"></div>
-          <label class="label" for="topicSelect">Filter topic</label>
-          <select class="select" id="topicSelect">
-            <option value="all">All topics</option>
-            <option value="taxes">Taxes</option>
-            <option value="education">Education</option>
-            <option value="health">Health care</option>
-            <option value="transit">Transit</option>
-            <option value="housing">Housing</option>
-            <option value="public-safety">Public safety</option>
-          </select>
-          <div style="height:14px"></div>
-          <button class="btn secondary" id="resetFilters">Reset filters</button>
-        </aside>
-        <div class="topic-grid" id="topicGrid"></div>
-      </div>
-    </section>
-
-    <section id="chat">
-      <div class="section-head">
-        <div>
-          <h2>Ask about the budget</h2>
-          <div class="section-deck">Reader-facing Q&amp;A using the ChatGPT API through a secure proxy endpoint.</div>
-        </div>
-      </div>
-      <div class="chat-wrap">
-        <aside class="card chat-config">
-          <div class="label">Proxy endpoint</div>
-          <input class="input" id="proxyUrl" placeholder="Paste your Worker URL here" />
-          <div style="height:10px"></div>
-          <div class="tiny">
-            Use a server-side proxy or Cloudflare Worker so your API key is never exposed in GitHub Pages.
-          </div>
-        </aside>
-        <div class="card chat-card">
-          <div class="chat-log" id="chatLog"></div>
-          <div class="chat-row">
-            <textarea id="chatInput" rows="3" placeholder="Ask about school aid, pensions, taxes, Medicaid, housing, or anything else in the budget..."></textarea>
-            <button class="btn" id="sendBtn">Send</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="sources">
-      <div class="section-head">
-        <div>
-          <h2>Source notes</h2>
-          <div class="section-deck">What this package is built from and how readers should interpret it.</div>
-        </div>
-      </div>
-      <div class="source-list" id="sourceList"></div>
-    </section>
-
-    <div class="footer">
-      Designed as a GitHub Pages-ready NJ.com-style explainer. Place this file alongside <strong>njdotcom-logo.jpg</strong>.
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Search budget topics...">
     </div>
-  </main>
+  </div>
+</header>
 
-  <script>
-    const stats = [
-      { label: "Total budget", value: "$60.7B", desc: "Proposed appropriations.", delta: "Top-line figure readers search for first." },
-      { label: "Revenues", value: "$59.1B", desc: "Estimated resources supporting the plan.", delta: "Key measure of one-year balance." },
-      { label: "Surplus", value: "$5.364B", desc: "Projected ending surplus.", delta: "Important cushion, but still politically debated." },
-      { label: "Property-tax relief", value: "$28.735B", desc: "Affordability support across major programs.", delta: "Central message of the budget." },
-      { label: "Pension contribution", value: "$7.3B", desc: "Full annual pension payment.", delta: "A recurring fiscal benchmark." },
-      { label: "School funding", value: "$12B+", desc: "K-12 and related education support.", delta: "High local-news relevance statewide." },
-      { label: "NJ Transit support", value: "$1B+", desc: "Major state support for operations and system stability.", delta: "Daily commuter impact." },
-      { label: "Spending cuts", value: "$2B", desc: "Proposed reductions used to frame restraint.", delta: "Core political framing point." }
-    ];
+<section class="hero">
+  <h1>New Jersey <span>FY2027</span> Budget</h1>
+  <p class="subtitle">Governor Mikie Sherrill's proposed budget: "Rising to the Mission — A More Affordable and Accountable New Jersey"</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">$60.7B</div><div class="label">Total Budget</div></div>
+    <div class="hero-stat"><div class="num">$59.1B</div><div class="label">Total Revenue</div></div>
+    <div class="hero-stat"><div class="num">~$2B</div><div class="label">Spending Cuts</div></div>
+    <div class="hero-stat"><div class="num">$28.7B</div><div class="label">Property Tax Relief</div></div>
+  </div>
+</section>
 
-    const barData = [
-      { label: "Property-tax relief", amount: 28.735, total: 60.7, note: "$28.735B of a $60.7B budget" },
-      { label: "Pension contribution", amount: 7.3, total: 60.7, note: "$7.3B pension payment" },
-      { label: "Projected surplus", amount: 5.364, total: 60.7, note: "$5.364B ending surplus" },
-      { label: "Approx. spending cuts", amount: 2.0, total: 60.7, note: "About $2B in reductions" }
-    ];
+<nav class="cat-nav">
+  <div class="cat-nav-inner">
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="overview">Overview</button>
+    <button data-cat="tax">Property Tax</button>
+    <button data-cat="education">Education</button>
+    <button data-cat="health">Health &amp; Human Services</button>
+    <button data-cat="housing">Housing</button>
+    <button data-cat="energy">Energy</button>
+    <button data-cat="safety">Public Safety</button>
+    <button data-cat="transit">Transportation</button>
+    <button data-cat="economy">Economy &amp; Jobs</button>
+    <button data-cat="environment">Environment</button>
+    <button data-cat="revenue">Revenue</button>
+    <button data-cat="federal">Federal Impact</button>
+  </div>
+</nav>
 
-    const stories = [
-      {
-        title: "Austerity with selective expansion",
-        body: "The proposal leans on roughly $2 billion in spending reductions while preserving or expanding politically sensitive priorities like school aid, pensions, transit, and property-tax relief.",
-        why: "This is the central governing frame and likely the lead for statewide coverage.",
-        source: "Budget narrative and summary framing."
-      },
-      {
-        title: "School funding remains a headline issue",
-        body: "Education stays one of the clearest local-reporting entry points because district-by-district follow-ups and school-aid reaction stories can flow directly from the budget.",
-        why: "Readers care immediately when school budgets, class sizes, or local tax implications are at stake.",
-        source: "Education sections and major funding tables."
-      },
-      {
-        title: "Affordability remains the political message",
-        body: "Property-tax relief, senior supports, and household cost themes are central to the package’s public pitch, even as details matter for who benefits and how much.",
-        why: "This is likely to dominate audience-facing headlines and social traffic.",
-        source: "Affordability and relief program sections."
-      },
-      {
-        title: "Health care remains a pressure point",
-        body: "Medicaid and health-care cost pressure are among the more consequential long-term fiscal challenges inside the budget.",
-        why: "This shapes sustainability questions and deeper accountability follow-ups.",
-        source: "Health and Medicaid narrative sections."
-      },
-      {
-        title: "Transit funding carries daily real-world stakes",
-        body: "NJ Transit support is not just a budget line. It translates directly to reliability, service, and commuter politics.",
-        why: "Readers feel this one in everyday life and it broadens beyond Trenton coverage.",
-        source: "Transit-related appropriations and narrative."
-      },
-      {
-        title: "Pension payment remains a benchmark of discipline",
-        body: "The full pension contribution remains both a fiscal achievement talking point and a reminder of the state’s long-term obligations.",
-        why: "It is one of the most durable year-over-year budget storylines.",
-        source: "Pension and debt narrative."
-      }
-    ];
+<main class="main" id="mainContent">
 
-    const topics = [
-      {
-        category: "taxes",
-        title: "Property taxes and relief",
-        summary: "The affordability section is among the most audience-friendly parts of the budget, with direct household impact and broad political salience.",
-        bullets: [
-          "Property-tax relief remains one of the biggest budget messages.",
-          "Readers will want to know who qualifies, how much relief is available, and what changes from prior years.",
-          "This is fertile ground for service journalism and accountability reporting."
-        ],
-        tags: ["ANCHOR", "Stay NJ", "Affordability"]
-      },
-      {
-        category: "education",
-        title: "School aid and pre-K",
-        summary: "Education is the easiest bridge from statewide budget coverage to local follow-up stories.",
-        bullets: [
-          "School funding has immediate district-level implications.",
-          "Pre-K expansion and school support remain major talking points.",
-          "Local superintendents, school boards, and lawmakers will react quickly."
-        ],
-        tags: ["School aid", "Pre-K", "District impact"]
-      },
-      {
-        category: "health",
-        title: "Medicaid and health care",
-        summary: "Health-care costs are one of the major structural pressures in the budget.",
-        bullets: [
-          "Medicaid spending pressure shapes long-term sustainability questions.",
-          "Hospital and provider concerns often drive follow-up reporting.",
-          "Federal policy changes can intensify the risk profile."
-        ],
-        tags: ["Medicaid", "Hospitals", "Budget pressure"]
-      },
-      {
-        category: "transit",
-        title: "NJ Transit and mobility",
-        summary: "Transit funding remains a high-interest statewide quality-of-life issue.",
-        bullets: [
-          "This affects daily commuters and major economic corridors.",
-          "Readers want clarity on service, reliability, and operating support.",
-          "Transit is both a budget story and an infrastructure story."
-        ],
-        tags: ["NJ Transit", "Commuters", "Infrastructure"]
-      },
-      {
-        category: "housing",
-        title: "Housing and development",
-        summary: "Housing-related items matter to affordability, growth, and local politics.",
-        bullets: [
-          "Housing affordability remains a broad concern in New Jersey.",
-          "Budget choices can affect incentives, development, and support programs.",
-          "Good area for localizing statewide policy."
-        ],
-        tags: ["Housing", "Affordability", "Development"]
-      },
-      {
-        category: "public-safety",
-        title: "Public safety and justice",
-        summary: "Public safety items often draw both political attention and local newsroom follow-ups.",
-        bullets: [
-          "Funding choices shape staffing, grants, and enforcement priorities.",
-          "Lawmakers and county officials often use these items to define broader narratives.",
-          "This section works well for county-by-county localized reporting."
-        ],
-        tags: ["Public safety", "Courts", "Local impact"]
-      }
-    ];
+<!-- BUDGET OVERVIEW -->
+<div class="budget-section" data-category="overview" id="sec-overview">
+  <div class="section-header">
+    <div class="section-icon">📊</div>
+    <h2>Budget Overview</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="total budget appropriations spending">
+      <span class="tag tag-reform">Summary</span>
+      <h3>Total FY2027 Appropriations</h3>
+      <div class="figure">$60.7 billion</div>
+      <p>The FY2027 budget recommends total appropriations of $60.7 billion, an increase of $979.8 million (1.6%) over FY2026 adjusted appropriations of $59.7 billion.</p>
+    </div>
+    <div class="card" data-search="revenue forecast income">
+      <span class="tag tag-reform">Revenue</span>
+      <h3>Total Anticipated Revenue</h3>
+      <div class="figure">$59.1 billion</div>
+      <p>Total revenues projected at $59.1 billion, an increase of $1.6 billion (2.7%) over FY2026. Growth driven by gross income tax and sales tax, partially offset by declining non-tax revenues.</p>
+    </div>
+    <div class="card" data-search="spending cuts savings reductions">
+      <span class="tag tag-cut">Cuts</span>
+      <h3>Spending Reductions</h3>
+      <div class="figure red">~$2 billion</div>
+      <p>The budget includes nearly $2 billion in spending cuts. Governor Sherrill describes these as "tough, but necessary" choices to address structural challenges that have grown year after year.</p>
+    </div>
+    <div class="card" data-search="budget breakdown state aid grants operations">
+      <h3>How the Budget Breaks Down</h3>
+      <table>
+        <tr><td>State Aid (school &amp; municipal aid)</td><td>$24.4B (40.2%)</td></tr>
+        <tr><td>Grants-In-Aid (services for residents)</td><td>$20.8B (34.3%)</td></tr>
+        <tr><td>Executive Operations (running government)</td><td>$5.4B (8.9%)</td></tr>
+        <tr><td>Debt Service</td><td>$3.2B (5.3%)</td></tr>
+        <tr><td>Capital Construction</td><td>$1.9B (3.2%)</td></tr>
+      </table>
+    </div>
+    <div class="card" data-search="pension contribution retirement liability">
+      <span class="tag tag-increase">Pension</span>
+      <h3>Full Pension Payment</h3>
+      <div class="figure">$7.3 billion</div>
+      <p>Includes the full actuarially recommended pension contribution — the first full payment by a first-year governor in decades. Includes $1.1 billion from State Lottery revenue. This represents 12% of the FY2027 budget.</p>
+    </div>
+    <div class="card" data-search="health benefits employees insurance costs">
+      <span class="tag tag-increase">Trend</span>
+      <h3>State Employee Health Benefits</h3>
+      <div class="figure">$7.6 billion</div>
+      <p>Expected spending on health benefits for active and retired enrollees, a 10% increase from FY2026. Costs have risen approximately 84% (6% annually) since FY2017. The Governor describes these rising costs as "unsustainable."</p>
+    </div>
+    <div class="card" data-search="surplus fund balance reserves">
+      <h3>Ending Fund Balance</h3>
+      <div class="figure">$5.4 billion</div>
+      <p>The projected undesignated General Fund balance at the end of FY2027 is $5.36 billion, down from $7.26 billion at the start of the fiscal year — a decrease of approximately $1.9 billion.</p>
+    </div>
+    <div class="card" data-search="chief operating officer innovation authority efficiency modernize">
+      <span class="tag tag-new">New</span>
+      <h3>Innovation &amp; Government Efficiency</h3>
+      <div class="figure blue">$13.3M increase</div>
+      <p>Additional funding for the NJ Innovation Authority (NJIA) to support major initiatives including the Permitting Dashboard and NJ Report Card, working with the newly established Chief Operating Officer to modernize systems and improve transparency.</p>
+    </div>
+  </div>
+</div>
 
-    const sources = [
-      {
-        label: "Primary source",
-        title: "Governor’s Budget in Brief",
-        body: "This package is built from the uploaded New Jersey budget PDF and is designed as a reader-facing editorial guide.",
-      },
-      {
-        label: "Editorial note",
-        title: "Newsroom framing",
-        body: "The page emphasizes the most newsworthy and serviceable angles rather than reproducing the budget line by line.",
-      },
-      {
-        label: "Reader note",
-        title: "Q&A tool",
-        body: "The chat box is designed for a secure server-side proxy. Do not place an OpenAI API key directly in client-side code.",
-      },
-      {
-        label: "Publishing note",
-        title: "GitHub Pages setup",
-        body: "Publish this file with the NJ.com logo file in the same directory for a simple static deployment.",
-      }
-    ];
+<!-- PROPERTY TAX -->
+<div class="budget-section" data-category="tax" id="sec-tax">
+  <div class="section-header">
+    <div class="section-icon">🏠</div>
+    <h2>Property Tax Relief</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="property tax relief total programs direct indirect">
+      <h3>Total Property Tax Relief</h3>
+      <div class="figure">$28.7 billion</div>
+      <p>Forty-seven percent of the entire FY2027 budget — $28.7 billion — supports direct and indirect property tax relief programs, including school aid, municipal aid, direct tax relief, and other local aid. This is described as a record amount.</p>
+    </div>
+    <div class="card" data-search="stay nj senior property tax credit threshold benefit cap">
+      <span class="tag tag-reform">Reformed</span>
+      <h3>Stay NJ Program</h3>
+      <p>Expected to benefit over <strong>440,000 seniors</strong>. The Governor proposes targeted reductions: the income threshold will be modified to $250,000 (down from $500,000) to align with ANCHOR, and the maximum benefit will be capped at $4,000 (down from $6,500). The 12% surplus trigger required by law was not met.</p>
+    </div>
+    <div class="card" data-search="anchor homeowner renter property tax relief bonus">
+      <h3>ANCHOR Program</h3>
+      <p>Expected to provide direct property tax relief for nearly <strong>1.4 million homeowners</strong> and over <strong>673,000 renters</strong>. The Governor proposes maintaining the $250 ANCHOR bonus for nearly 111,000 senior renters — a bonus that would have otherwise expired after FY2026.</p>
+    </div>
+    <div class="card" data-search="direct property tax relief programs spending total allocation">
+      <h3>Direct Relief Programs</h3>
+      <div class="figure">$4.2 billion</div>
+      <p>The State will allocate nearly $4.2 billion across six direct property tax relief programs and tax deductions. Over 2 million residents will receive some form of assistance.</p>
+    </div>
+    <div class="card" data-search="senior freeze disabled citizens property tax freeze elderly">
+      <h3>Senior &amp; Disabled Citizens' Tax Freeze</h3>
+      <p>Eligibility expands again in FY2027. Since FY2020, the program has grown to benefit nearly <strong>271,000 more residents</strong>.</p>
+    </div>
+    <div class="card" data-search="municipal aid shared services local government LEAP consolidation">
+      <h3>Municipal Aid &amp; Shared Services</h3>
+      <div class="figure">$1.7 billion+</div>
+      <p>Over $1.7 billion in municipal aid. Includes a $1 million increase for LEAP (total $3 million) and $5 million for consolidating public safety infrastructure. Since FY2020, 162 LEAP grants totaling $24 million have been issued. For every $1,000 in LEAP grants, government units have saved $3,000.</p>
+    </div>
+  </div>
+</div>
 
-    const systemPrompt = `
-You are an NJ.com budget explainer assistant.
-Answer reader questions about the New Jersey state budget in a concise, plain-English way.
-Stay grounded in these known figures and themes:
-- Total budget: $60.7B
-- Revenues: $59.1B
-- Projected surplus: $5.364B
-- Property-tax relief: $28.735B
-- Pension contribution: $7.3B
-- Major themes: affordability, school funding, pensions, transit, Medicaid pressure, spending cuts
-If a question asks for a figure not clearly in the page data, say that the reader should consult the full budget document or a newsroom follow-up.
-Do not invent line items.
-`.trim();
+<!-- EDUCATION -->
+<div class="budget-section" data-category="education" id="sec-education">
+  <div class="section-header">
+    <div class="section-icon">🎓</div>
+    <h2>Education</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="pre-k 12 school funding formula aid total education">
+      <h3>Pre-K to 12 Total Funding</h3>
+      <div class="figure">$22.5 billion</div>
+      <p>Total funding for pre-K to 12 education (including $891.8M from the Lottery Enterprise Contribution Act), an increase of $222.6 million over the prior year. Described as the highest school aid funding in NJ history.</p>
+    </div>
+    <div class="card" data-search="formula aid school districts funding cap losses gains">
+      <h3>Formula Aid</h3>
+      <div class="figure">$12.4 billion</div>
+      <p>The largest amount of formula aid in state history. Maintains a 3% cap on losses and 6% cap on gains, calculates special education aid on actual enrollment, and uses multi-year averages for property wealth and income.</p>
+    </div>
+    <div class="card" data-search="preschool pre-k early childhood education districts">
+      <span class="tag tag-increase">+9.3%</span>
+      <h3>Preschool Education Aid</h3>
+      <div class="figure">$1.4 billion</div>
+      <p>A 9.3% increase over FY2026, providing resources for nearly 300 districts with State-funded pre-K. An additional $4.5 million supports new districts. More than half of NJ school districts now have access to state-funded pre-K.</p>
+    </div>
+    <div class="card" data-search="tutoring high impact learning acceleration academic support students">
+      <span class="tag tag-increase">Doubled</span>
+      <h3>High-Impact Tutoring</h3>
+      <div class="figure">$15 million</div>
+      <p>Investment doubles from the prior year. Will help nearly 100 more districts and 13,500 more students. Early results show students achieving 2+ grade levels of growth in literacy.</p>
+    </div>
+    <div class="card" data-search="school construction SDA schools development authority buildings">
+      <h3>School Construction</h3>
+      <div class="figure">$400 million</div>
+      <p>$350 million for the Schools Development Authority for current projects and its Statewide Strategic Plan, plus $50 million in General Fund capital grants for SDA districts.</p>
+    </div>
+    <div class="card" data-search="higher education college university tuition financial aid TAG">
+      <h3>Higher Education</h3>
+      <div class="figure">$3.3 billion+</div>
+      <p>Includes $530.2M for Tuition Aid Grants (TAG), $109M for College Promise programs (CCOG and Garden State Guarantee), $54.8M for Educational Opportunity Fund, $755.2M for State college operating support, $169.1M for county colleges, and $60M to offset fringe costs at research universities.</p>
+    </div>
+    <div class="card" data-search="child care assistance families working daycare">
+      <h3>Child Care Assistance</h3>
+      <div class="figure">$582 million</div>
+      <p>State funds projected to support care for up to 77,500 children — 2,500 more than in FY2026. An additional $18 million in child care assistance funding is included, along with $7.5M from the Social Impact Investment Fund for child care facilities.</p>
+    </div>
+    <div class="card" data-search="family connects nurse home visiting program newborn maternal">
+      <span class="tag tag-new">Statewide Expansion</span>
+      <h3>Family Connects NJ</h3>
+      <div class="figure blue">$12.8M increase</div>
+      <p>An additional $12.8 million to expand the universal nurse home visiting program statewide for the first time. Since launch in January 2024, nurses have performed nearly 10,000 home visits. All 21 counties will be eligible beginning in 2027.</p>
+    </div>
+    <div class="card" data-search="SPARK school mental health youth counseling behavioral">
+      <span class="tag tag-new">New Initiative</span>
+      <h3>SPARK: School Mental Health</h3>
+      <div class="figure">$33 million</div>
+      <p>School-based Partnerships for Access and Resilience for Kids (SPARK) — a new statewide initiative to expand mental health services in K-12 schools. SPARK grants will support districts in building partnerships with licensed mental health providers to increase access to school-based counseling.</p>
+    </div>
+  </div>
+</div>
 
-    function renderStats() {
-      const el = document.getElementById("statsGrid");
-      el.innerHTML = stats.map(item => `
-        <article class="card stat">
-          <div class="label">${item.label}</div>
-          <div class="value">${item.value}</div>
-          <div class="desc">${item.desc}</div>
-          <div class="delta">${item.delta}</div>
-        </article>
-      `).join("");
-    }
+<!-- HEALTH CARE & HUMAN SERVICES -->
+<div class="budget-section" data-category="health" id="sec-health">
+  <div class="section-header">
+    <div class="section-icon">🏥</div>
+    <h2>Health Care &amp; Human Services</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="medicaid familycare health coverage insurance children">
+      <h3>NJ FamilyCare (Medicaid)</h3>
+      <div class="figure">$7.2 billion</div>
+      <p>State funding for NJ's Medicaid program, providing comprehensive benefits to more than 1.8 million residents including seniors, individuals with disabilities, low-income adults, and nearly half of the State's children. Cover All Kids covers roughly 850,000 children.</p>
+    </div>
+    <div class="card" data-search="hospital acute care charity GME funding healthcare system">
+      <h3>Hospital System Funding</h3>
+      <div class="figure">$3.6 billion</div>
+      <p>NJ's 70 acute care hospitals will receive approximately $3.6 billion from direct subsidy programs including Charity Care, Graduate Medical Education, and the outpatient State-directed payment program. Additionally, $147 million in federal Rural Health Transformation Program funding begins deployment.</p>
+    </div>
+    <div class="card" data-search="developmental disabilities services adults community support">
+      <span class="tag tag-increase">+$154M</span>
+      <h3>Developmental Disabilities</h3>
+      <p>State spending for the Division of Developmental Disabilities increases by $154 million to meet the needs of adults in this community. Continues funding for the Office of the Ombudsman and investments in services for blind, visually impaired, deaf, and hard of hearing individuals.</p>
+    </div>
+    <div class="card" data-search="children system of care youth services protection welfare">
+      <h3>Children's System of Care</h3>
+      <div class="figure">$513.5 million</div>
+      <p>Total State funding includes $513.5 million for the Children's System of Care and $39 million for school-based services. The Division of Child Protection and Permanency budget totals $1.2 billion across state, dedicated, and federal funds.</p>
+    </div>
+    <div class="card" data-search="reproductive health family planning women access care">
+      <h3>Reproductive Health Care</h3>
+      <div class="figure">$52 million</div>
+      <p>Maintained at $52 million for family planning services and reproductive health access. More than $30 million supports care at clinics in every county regardless of ability to pay, plus a $22 million Reproductive Health Access Fund to respond to emerging threats.</p>
+    </div>
+    <div class="card" data-search="opioid substance abuse mental health overdose crisis drug">
+      <h3>Opioid Crisis &amp; Mental Health</h3>
+      <div class="figure">$448.7 million</div>
+      <p>Committed toward care at the State's four psychiatric hospitals. Nearly $312 million in opioid settlement resources has been advanced. The Department of Health reports opioid-related deaths declined nearly 30% between 2023 and 2024.</p>
+    </div>
+    <div class="card" data-search="aging seniors pharmaceutical prescription drug retirement elderly">
+      <h3>Aging &amp; Senior Services</h3>
+      <p>Includes $397 million in growth for NJ FamilyCare's long-term care population and $22.4 million for Pharmaceutical Assistance to the Aged and Disabled plus Senior Gold, providing prescription drug benefits to nearly 158,000 residents. RetireReady NJ continues to help workers save for retirement.</p>
+    </div>
+    <div class="card" data-search="maternal infant health pregnancy birth mortality racial disparity nurse">
+      <h3>Maternal &amp; Infant Health</h3>
+      <p>Continues funding for the NJ Maternal and Infant Health Innovation Authority to advance evidence-based strategies reducing maternal mortality, infant mortality, and racial disparities. Family Connects NJ expansion (see Education section) embeds early intervention in the home.</p>
+    </div>
+    <div class="card" data-search="public health vaccination lab PFAS data modernization">
+      <h3>Public Health Investments</h3>
+      <p>Adds $2 million for the state-funded vaccination program, $1 million to strengthen State Public Health and Environmental Laboratories, and $5.4 million for data modernization to ensure readiness against public health threats.</p>
+    </div>
+    <div class="card" data-search="food assistance SNAP hunger school meals food banks nutrition">
+      <h3>Food Assistance</h3>
+      <p>Includes school meals for nearly 21,000 children (Working-Class Families Anti-Hunger Act), $30.2 million to maintain a minimum $95 SNAP benefit for 40,000 households, and $85 million for food banks and emergency feeding organizations.</p>
+    </div>
+    <div class="card" data-search="online safety social media youth phone cell research center">
+      <span class="tag tag-new">New</span>
+      <h3>Youth Online Safety</h3>
+      <p>Funds the Office of Youth Online Mental Health Safety and Awareness (created by Executive Order No. 6). Includes $500,000 for a new Social Media Research Center at a NJ institution of higher education. The Department of Education will work with districts to prepare for the first cell phone-free school year.</p>
+    </div>
+    <div class="card" data-search="get covered new jersey ACA marketplace insurance premiums subsidies">
+      <h3>Health Insurance Marketplace</h3>
+      <p>Get Covered New Jersey enrolled 509,192 residents during the most recent open enrollment. Federal elimination of ACA subsidies caused the share of residents with premiums under $10/month to drop from 48% in 2025 to 8% in 2026. A Health Insurance Strike Team has been directed to help mitigate this crisis.</p>
+    </div>
+  </div>
+</div>
 
-    function renderBars() {
-      const el = document.getElementById("barsGrid");
-      el.innerHTML = barData.map(item => {
-        const pct = Math.max(2, Math.min(100, (item.amount / item.total) * 100));
-        return `
-          <article class="card bar-card">
-            <div class="label">${item.label}</div>
-            <div class="bar-row">
-              <div class="bar-top">
-                <strong>${item.amount.toFixed(3).replace(/\.?0+$/,'')}B</strong>
-                <span>${pct.toFixed(1)}% of budget</span>
-              </div>
-              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-              <div class="desc" style="margin-top:10px">${item.note}</div>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
+<!-- HOUSING -->
+<div class="budget-section" data-category="housing" id="sec-housing">
+  <div class="section-header">
+    <div class="section-icon">🏗️</div>
+    <h2>Housing &amp; Homelessness</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="down payment assistance homebuyer first time first generation homeownership">
+      <span class="tag tag-increase">+$5M</span>
+      <h3>Down Payment Assistance</h3>
+      <div class="figure">$45 million</div>
+      <p>Total investment up $5 million, expected to help nearly 3,000 new first-time and first-generation homebuyers. The program is described as a tool for closing the racial wealth gap and supporting generational wealth creation.</p>
+    </div>
+    <div class="card" data-search="affordable housing trust fund construction diversion">
+      <h3>Affordable Housing Trust Fund</h3>
+      <p>Diversions reduced by more than $70 million, making $30 million available for new construction. Expanding affordable housing production is intended to relieve pressure on the market and lower costs for families.</p>
+    </div>
+    <div class="card" data-search="homelessness rapid re-housing prevention vulnerable">
+      <span class="tag tag-new">New</span>
+      <h3>Homelessness Response</h3>
+      <div class="figure">$25 million</div>
+      <p>New funding for the Department of Community Affairs to expand rapid re-housing programs for vulnerable households in imminent risk of homelessness.</p>
+    </div>
+    <div class="card" data-search="veterans homelessness housing bringing veterans home">
+      <h3>Bringing Veterans Home</h3>
+      <div class="figure">$11 million</div>
+      <p>Joint initiative by the Departments of Community Affairs and Veterans Affairs to end veterans' homelessness. Since launch in January 2025, the program has helped over 2,200 homeless veterans.</p>
+    </div>
+    <div class="card" data-search="social impact investment fund SIIF developers multifamily infrastructure">
+      <h3>Social Impact Investment Fund</h3>
+      <p>Deploying $20 million in seed funding: $7.5 million for affordable housing loans, $7.5 million for child care facilities loans, and $5 million for infrastructure loans — supporting small, minority, and women-owned developers entering the multifamily housing market.</p>
+    </div>
+  </div>
+</div>
 
-    function renderStories() {
-      const el = document.getElementById("storiesGrid");
-      el.innerHTML = stories.map(item => `
-        <article class="card story">
-          <h3>${item.title}</h3>
-          <div class="desc">${item.body}</div>
-          <div class="why">Why it matters</div>
-          <div class="desc">${item.why}</div>
-          <div class="sources">${item.source}</div>
-        </article>
-      `).join("");
-    }
+<!-- ENERGY -->
+<div class="budget-section" data-category="energy" id="sec-energy">
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <h2>Energy Affordability &amp; Reliability</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="utility rates electricity price freeze ratepayer bills PJM">
+      <h3>Rate Freeze</h3>
+      <p>Pursuant to Executive Order No. 1, the State is freezing rates by offsetting increases from the most recent electricity price auction. Due to efforts to rein in PJM (the regional grid operator), the recent auction only yielded impacts of up to 2%. Without intervention, rate hikes would have been comparable to last year's, costing 67 million Americans $27 billion.</p>
+    </div>
+    <div class="card" data-search="power generation solar storage energy programs supply">
+      <h3>Expanding Power Generation</h3>
+      <p>The Governor is accelerating programs to develop new power generation including solar, storage, energy efficiency, and demand response. Programs include the Garden State Energy Storage Program, Competitive Solar Incentive Program, and aggregating distributed energy into "virtual power plants" to reduce peak demand.</p>
+    </div>
+    <div class="card" data-search="comfort partners REAP assistance low income energy burden vulnerable">
+      <h3>Assistance for Vulnerable Households</h3>
+      <p>Continued support for Comfort Partners and the Community Solar Energy Program. The Board of Public Utilities will be directed to issue another round of Residential Energy Assistance Payments (REAP) for lower-income residents and provide further rate relief.</p>
+    </div>
+  </div>
+</div>
 
-    function renderTopics() {
-      const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      const cat = document.getElementById("topicSelect").value;
-      const filtered = topics.filter(item => {
-        const haystack = [
-          item.category,
-          item.title,
-          item.summary,
-          ...item.bullets,
-          ...item.tags
-        ].join(" ").toLowerCase();
-        const catOk = cat === "all" || item.category === cat;
-        const qOk = !q || haystack.includes(q);
-        return catOk && qOk;
+<!-- PUBLIC SAFETY -->
+<div class="budget-section" data-category="safety" id="sec-safety">
+  <div class="section-header">
+    <div class="section-icon">🛡️</div>
+    <h2>Law &amp; Public Safety</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="corrections department incarceration prison officers safety">
+      <h3>Department of Corrections</h3>
+      <div class="figure">$1.3 billion</div>
+      <p>Continued investment in facility operations and successful re-entry services. Budget supports the State Parole Board, which plays an integral role in sustaining NJ's record low recidivism rates.</p>
+    </div>
+    <div class="card" data-search="state police trooper recruit class body camera">
+      <h3>State Police &amp; Trooper Class</h3>
+      <div class="figure">$6 million</div>
+      <p>Funds the 169th Trooper Class along with new support for body-worn camera maintenance and the P25 radio system.</p>
+    </div>
+    <div class="card" data-search="ARRIVE mental health police crisis intervention response">
+      <h3>ARRIVE Together Program</h3>
+      <div class="figure">~$20 million</div>
+      <p>Partners police officers with mental health professionals when responding to a person experiencing a mental health crisis. Also continues hospital- and community-based violence intervention programs using $25.5 million from adult-use marijuana revenues.</p>
+    </div>
+    <div class="card" data-search="cannabis marijuana regulation market business license revenue">
+      <h3>Cannabis Market</h3>
+      <p>The regulated cannabis market continues to grow with nearly 400 licensed businesses operating in over 200 municipalities. Cannabis sales are expected to produce $106 million in tax and fee revenues in FY2027.</p>
+    </div>
+    <div class="card" data-search="immigration ICE executive order protect new americans">
+      <h3>New American Protections</h3>
+      <p>Executive Order No. 12 prevents ICE from staging operations on state property. A "Know Your Rights" website was published and a portal launched for residents to submit video footage of ICE interactions. Budget supports translation and interpretation services.</p>
+    </div>
+    <div class="card" data-search="veterans military affairs armories department memorial homes">
+      <h3>Military &amp; Veterans Affairs</h3>
+      <p>Additional $10.5 million covers increased operating expenses at the State's three Veterans Memorial Homes. The new Department of Military Affairs receives $12.9 million, including $1 million for maintenance at aging armories. NJ is the country's first female veteran governor's state.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSPORTATION -->
+<div class="budget-section" data-category="transit" id="sec-transit">
+  <div class="section-header">
+    <div class="section-icon">🚂</div>
+    <h2>Transportation &amp; Infrastructure</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="nj transit bus rail operating funding subsidy commuters">
+      <span class="tag tag-increase">+26%</span>
+      <h3>NJ TRANSIT Support</h3>
+      <div class="figure">$1 billion+</div>
+      <p>Over $1 billion in State support, an increase of $215.3 million (26%) from FY2026. Includes a $282.2 million General Fund subsidy and $765.6 million from the Corporate Transit Fee. Prevents service cuts and supports a more user-friendly mobile app. NJ Transit faces 11% operating cost increases.</p>
+    </div>
+    <div class="card" data-search="gateway tunnel project federal commuters rail">
+      <h3>Gateway Tunnel Project</h3>
+      <p>The Governor is committed to advancing the Gateway Tunnel Project and fighting to ensure federal government support for NJ jobs and commuters. NJ TRANSIT continues work toward a fully modernized bus and rail fleet by 2031.</p>
+    </div>
+    <div class="card" data-search="transportation capital program highway bridge infrastructure trust fund">
+      <h3>Transportation Capital Program</h3>
+      <div class="figure">$2.1 billion</div>
+      <p>Includes $1.3 billion for state, local highway, and bridge projects, and $782 million for NJ Transit capital projects. Transportation Trust Fund spending increases by $60 million in FY2027.</p>
+    </div>
+    <div class="card" data-search="DOT financial system NJHIVE accounting federal reimbursement">
+      <h3>DOT Modernization</h3>
+      <div class="figure">$10 million</div>
+      <p>Upfront funding for DOT to convert its financial management system to NJHIVE, the State's modern enterprise accounting platform. Will improve capacity to process more than $1 billion in annual federal transportation reimbursements more quickly and securely.</p>
+    </div>
+    <div class="card" data-search="LAND plan transit oriented development housing revenue">
+      <h3>NJ TRANSIT LAND Plan</h3>
+      <p>The Governor will support NJ TRANSIT's Leveraging Assets for Non-farebox Dollars (LAND) Plan, which proposes transit-oriented development and land use reforms to provide new revenue for the agency while improving housing opportunities for families.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ECONOMIC DEVELOPMENT -->
+<div class="budget-section" data-category="economy" id="sec-economy">
+  <div class="section-header">
+    <div class="section-icon">💼</div>
+    <h2>Economy &amp; Jobs</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="small business BAC action center registration fees filing">
+      <h3>Small Business Support</h3>
+      <p>Maintains Main Street Recovery Fund. Proposes cutting filing fees for corporations and non-profits. Additional employees for the Business Action Center (BAC) under Lt. Governor Caldwell to reach more businesses and streamline permitting/licensing.</p>
+    </div>
+    <div class="card" data-search="minority women owned business MWBE procurement disparity">
+      <span class="tag tag-new">New</span>
+      <h3>MWBE Support</h3>
+      <div class="figure">$500,000</div>
+      <p>Investing in a team of experts to provide training and technical assistance to minority and women-owned businesses navigating State procurement. The 2024 Disparity Study found the procurement process does not provide adequate access for minority-, women-, and veteran-owned businesses.</p>
+    </div>
+    <div class="card" data-search="workforce development labor training summer youth jobs apprenticeship">
+      <h3>Workforce Development</h3>
+      <p>An additional $1 million for the Summer Youth Work Experience Program. The Governor is requesting a review of existing workforce development programming to evaluate effectiveness and align training with employer demand. Stronger partnerships among colleges, employers, and training programs are prioritized.</p>
+    </div>
+    <div class="card" data-search="FIFA World Cup 250th events tourism economy visitors">
+      <h3>Major Events</h3>
+      <p>Preparing to host the 2026 FIFA World Cup final, expected to attract millions of visitors. The Administration will also commemorate the nation's 250th anniversary. Significant resources directed to public safety and transportation infrastructure for these events.</p>
+    </div>
+    <div class="card" data-search="economic outlook GDP growth employment jobs labor market">
+      <h3>NJ Economic Outlook</h3>
+      <p>NJ real GDP grew 2.2% in the first three quarters of 2025. The state has 177,100 more nonfarm jobs than pre-pandemic (4.2% growth), outpacing NY (1.9%), PA (2.8%), and CT (0.9%). The unemployment rate reached 5.4% in December 2025. Median home price reached $585,000 in 2025, up 6.4%.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ENVIRONMENT -->
+<div class="budget-section" data-category="environment" id="sec-environment">
+  <div class="section-header">
+    <div class="section-icon">🌿</div>
+    <h2>Environment &amp; Agriculture</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="DEP permitting environment protection regulatory review streamline">
+      <h3>DEP Permitting Reform</h3>
+      <p>Budget addresses DEP understaffing and establishes two new regulatory review teams to reduce permitting backlogs. Greater permitting capacity will expedite energy generation and housing construction, reducing construction delays and costs.</p>
+    </div>
+    <div class="card" data-search="water infrastructure drinking clean PFAS forever chemicals">
+      <span class="tag tag-increase">+10%</span>
+      <h3>Water Infrastructure</h3>
+      <p>Ten percent increase in Drinking Water and Clean Water Infrastructure funding, allowing NJ to access $265 million in federal funds. Additionally, $4.5 million available to implement the Protecting Against Forever Chemicals law (P.L.2025, c.202) and reduce PFAS discharges.</p>
+    </div>
+    <div class="card" data-search="agriculture food security farmland department solar farms">
+      <h3>Agriculture</h3>
+      <div class="figure">$131.1 million</div>
+      <p>Total funding for the Department of Agriculture including food security. Supports food banks, school nutrition, farmland preservation programs, and expansion of responsible solar energy use on farms.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVENUE OUTLOOK -->
+<div class="budget-section" data-category="revenue" id="sec-revenue">
+  <div class="section-header">
+    <div class="section-icon">📈</div>
+    <h2>Revenue Outlook</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="gross income tax GIT revenue withholding estimated payments">
+      <h3>Gross Income Tax</h3>
+      <div class="figure">$22.9 billion</div>
+      <p>The State's largest revenue (~39% of total). FY2027 forecast up 2.0% from FY2026. Employer withholding has posted 5%+ growth in 7 of the past 8 fiscal years. The Administration proposes reducing the Alternative Business Calculation deduction for high-income taxpayers — affecting approximately 10,000 taxpayers (&lt;1% of filers).</p>
+    </div>
+    <div class="card" data-search="sales tax consumer spending retail revenue">
+      <h3>Sales Tax</h3>
+      <div class="figure">$14.7 billion</div>
+      <p>FY2027 forecast represents 3.6% growth over FY2026. Consumer spending expected to remain resilient. FIFA World Cup matches and tourism-driven momentum may boost early FY2027 collections.</p>
+    </div>
+    <div class="card" data-search="corporation business tax CBT corporate transit fee NOL">
+      <h3>Corporation Business Tax</h3>
+      <div class="figure">$4.1 billion</div>
+      <p>FY2027 CBT revenues projected at $4.1 billion, up 25% from a depressed FY2026 ($3.3 billion) where H.R.1 caused a sharp decline. Includes $485 million from a proposed temporary cap on Net Operating Loss deductions. Corporate Transit Fee projected at $814.4 million.</p>
+    </div>
+    <div class="card" data-search="pass through PTBAIT business alternative income tax">
+      <h3>Pass-Through Business Tax (PTBAIT)</h3>
+      <div class="figure">$4.78 billion</div>
+      <p>Projected to decline slightly from a strong FY2026 ($4.82B). Recent strength bolstered by robust capital markets and M&amp;A activity. Minimal impact expected from federal H.R.1 due to expanded SALT deduction.</p>
+    </div>
+    <div class="card" data-search="casino gaming internet sports betting revenue fund">
+      <h3>Casino Revenue Fund</h3>
+      <div class="figure">$1.0 billion</div>
+      <p>Expected to exceed $1 billion for the first time, up $65.9 million from FY2026. Growth supported by increased internet gaming and sports wagering tax rates.</p>
+    </div>
+    <div class="card" data-search="employer healthcare assistance contribution new tax charge medicaid">
+      <span class="tag tag-new">New Revenue</span>
+      <h3>Employer Healthcare Contributions</h3>
+      <div class="figure">$145 million</div>
+      <p>A new charge on employers with 50+ employees on NJ FamilyCare. Average State cost for covering this population is estimated at $1,700 per person. Intended to reduce private employers' reliance on public benefits.</p>
+    </div>
+    <div class="card" data-search="no new taxes everyday loopholes enforcement">
+      <h3>Revenue Strategy</h3>
+      <p>The State will enhance revenues without enacting new taxes on everyday New Jerseyans. Key strategies include closing corporate loopholes, identifying tax evaders through new technology and training, and a proposed licensing system for commercial data brokers ($2.5 million in projected fees).</p>
+    </div>
+  </div>
+</div>
+
+<!-- FEDERAL IMPACT -->
+<div class="budget-section" data-category="federal" id="sec-federal">
+  <div class="section-header">
+    <div class="section-icon">🏛️</div>
+    <h2>Federal Impact &amp; Response</h2>
+  </div>
+  <div class="cards">
+    <div class="card" data-search="HR1 federal government cuts medicaid SNAP administrative">
+      <span class="tag tag-federal">Federal</span>
+      <h3>H.R.1 Budget Impact</h3>
+      <div class="figure red">$100 million+</div>
+      <p>The budget includes over $100 million to respond to H.R.1: supporting counties with new SNAP administrative costs (federal share cut from 50% to 25%, shifting $71 million burden) and maintaining Medicaid coverage for families. The downstream effects of federal cuts will ultimately reduce public health and hospital funding by an estimated $3.3 billion in the out-years.</p>
+    </div>
+    <div class="card" data-search="ACA affordable care act subsidies premiums insurance marketplace">
+      <span class="tag tag-federal">Federal</span>
+      <h3>ACA Subsidy Elimination</h3>
+      <p>Trump Administration actions to eliminate ACA plan subsidies caused the share of residents with premiums under $10/month to plunge from 48% (2025) to 8% (2026). A Health Insurance Strike Team has been formed to mitigate impacts.</p>
+    </div>
+    <div class="card" data-search="federal accountability attorney general protect rights">
+      <span class="tag tag-federal">Federal</span>
+      <h3>Project for Federal Accountability</h3>
+      <p>Continued support for the Project for Federal Accountability in the Office of the Attorney General. Budget funds family planning services, reproductive healthcare access, and increased investments in water infrastructure as the federal government threatens clean air and water protections.</p>
+    </div>
+    <div class="card" data-search="corporate tax HR1 R&D expensing rolling conformity interest deductions">
+      <span class="tag tag-federal">Federal</span>
+      <h3>H.R.1 Corporate Tax Effects</h3>
+      <p>H.R.1 significantly reshaped the corporate tax landscape. As a rolling-conformity state, NJ automatically adopted provisions like immediate R&amp;D expensing and expanded interest deductions, reducing CBT revenue by $883.7 million from the original FY2026 forecast. Effects expected to moderate in FY2027.</p>
+    </div>
+  </div>
+</div>
+
+<div class="no-results" id="noResults">
+  <p>No budget items match your search. Try different keywords.</p>
+</div>
+
+</main>
+
+<footer>
+  <p>Source: State of New Jersey FY2027 Budget in Brief — Office of Management and Budget, March 2026</p>
+  <p>Presented by <a href="https://www.nj.com" target="_blank">NJ.com</a> · This dashboard presents factual summaries from the Governor's budget proposal.</p>
+  <p>Full document available at <a href="http://www.state.nj.us/treasury/omb/" target="_blank">state.nj.us/treasury/omb</a></p>
+</footer>
+
+<script>
+// Category navigation
+const catButtons = document.querySelectorAll('.cat-nav-inner button');
+const sections = document.querySelectorAll('.budget-section');
+const searchInput = document.getElementById('searchInput');
+const noResults = document.getElementById('noResults');
+
+catButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    catButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    searchInput.value = '';
+    showAllCards();
+    if (cat === 'all') {
+      sections.forEach(s => s.classList.remove('hidden'));
+    } else {
+      sections.forEach(s => {
+        s.classList.toggle('hidden', s.dataset.category !== cat);
       });
-
-      const el = document.getElementById("topicGrid");
-      if (!filtered.length) {
-        el.innerHTML = `<article class="card topic"><h3>No matches</h3><div class="desc">Try a broader search or reset the filters.</div></article>`;
-        return;
-      }
-
-      el.innerHTML = filtered.map(item => `
-        <article class="card topic">
-          <div class="label">${item.category.replace("-", " ")}</div>
-          <h3>${item.title}</h3>
-          <div class="desc">${item.summary}</div>
-          <ul>${item.bullets.map(b => `<li>${b}</li>`).join("")}</ul>
-          <div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
-        </article>
-      `).join("");
     }
+    noResults.style.display = 'none';
+  });
+});
 
-    function renderSources() {
-      const el = document.getElementById("sourceList");
-      el.innerHTML = sources.map(item => `
-        <article class="card source-item">
-          <div class="kicker">${item.label}</div>
-          <h3 style="margin:8px 0 8px;font-size:18px">${item.title}</h3>
-          <div class="desc">${item.body}</div>
-        </article>
-      `).join("");
+function showAllCards() {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('hidden'));
+}
+
+// Search functionality
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase().trim();
+  if (!query) {
+    sections.forEach(s => s.classList.remove('hidden'));
+    showAllCards();
+    noResults.style.display = 'none';
+    const activeBtn = document.querySelector('.cat-nav-inner button.active');
+    if (activeBtn && activeBtn.dataset.cat !== 'all') {
+      activeBtn.click();
     }
+    return;
+  }
+  // Reset category to all
+  catButtons.forEach(b => b.classList.remove('active'));
+  catButtons[0].classList.add('active');
+  sections.forEach(s => s.classList.remove('hidden'));
 
-    function addMessage(role, text) {
-      const log = document.getElementById("chatLog");
-      const div = document.createElement("div");
-      div.className = `msg ${role}`;
-      div.innerHTML = `<small>${role === "user" ? "You" : "Budget bot"}</small>${escapeHtml(text).replace(/\n/g,"<br>")}`;
-      log.appendChild(div);
-      log.scrollTop = log.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    async function sendChat() {
-      const input = document.getElementById("chatInput");
-      const proxy = document.getElementById("proxyUrl").value.trim();
-      const question = input.value.trim();
-
-      if (!question) return;
-      if (!proxy) {
-        addMessage("assistant", "Add your Cloudflare Worker or other proxy URL first.");
-        return;
-      }
-
-      addMessage("user", question);
-      input.value = "";
-      addMessage("assistant", "Thinking...");
-
-      try {
-        const log = document.getElementById("chatLog");
-        const thinkingNode = log.lastElementChild;
-
-        const response = await fetch(proxy, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "gpt-5-mini",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: question }
-            ]
-          })
-        });
-
-        const data = await response.json();
-        const answer = data.output_text || data.answer || data.error || "No response returned.";
-
-        thinkingNode.remove();
-        addMessage("assistant", answer);
-      } catch (err) {
-        const log = document.getElementById("chatLog");
-        const thinkingNode = log.lastElementChild;
-        if (thinkingNode) thinkingNode.remove();
-        addMessage("assistant", `Error: ${err.message}`);
-      }
-    }
-
-    document.getElementById("sendBtn").addEventListener("click", sendChat);
-    document.getElementById("chatInput").addEventListener("keydown", e => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendChat();
-    });
-    document.getElementById("searchInput").addEventListener("input", renderTopics);
-    document.getElementById("topicSelect").addEventListener("change", renderTopics);
-    document.getElementById("resetFilters").addEventListener("click", () => {
-      document.getElementById("searchInput").value = "";
-      document.getElementById("topicSelect").value = "all";
-      renderTopics();
-    });
-
-    renderStats();
-    renderBars();
-    renderStories();
-    renderTopics();
-    renderSources();
-    addMessage("assistant", "Ask a question about the New Jersey budget after you add your proxy URL.");
-  </script>
+  let anyVisible = false;
+  document.querySelectorAll('.card').forEach(card => {
+    const text = (card.textContent + ' ' + (card.dataset.search || '')).toLowerCase();
+    const match = query.split(/\s+/).every(term => text.includes(term));
+    card.classList.toggle('hidden', !match);
+    if (match) anyVisible = true;
+  });
+  // Hide sections with no visible cards
+  sections.forEach(s => {
+    const visibleCards = s.querySelectorAll('.card:not(.hidden)');
+    s.classList.toggle('hidden', visibleCards.length === 0);
+  });
+  noResults.style.display = anyVisible ? 'none' : 'block';
+});
+</script>
 </body>
 </html>
