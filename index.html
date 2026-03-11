@@ -1,181 +1,732 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NJ Budget Dashboard | FY 2027 Analysis</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .news-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        #chat-window { height: 350px; scrollbar-width: thin; }
-        .user-msg { background: #e2e8f0; align-self: flex-end; border-radius: 15px 15px 0 15px; }
-        .ai-msg { background: #dbeafe; align-self: flex-start; border-radius: 15px 15px 15px 0; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NJ Budget Briefing | FY 2027</title>
+  <meta name="description" content="Interactive New Jersey budget briefing with key numbers, storylines, topic filters, and reader chat." />
+  <style>
+    :root{
+      --bg:#f5f5f3;
+      --panel:#ffffff;
+      --panel-2:#fafaf8;
+      --text:#181818;
+      --muted:#5e5e5e;
+      --gold:#c0d22d;
+      --blue:#0b57d0;
+      --line:rgba(0,0,0,.10);
+      --green:#15803d;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --radius:18px;
+      --max:1260px;
+      --nj-dark:#555756;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font:16px/1.6 Georgia,"Times New Roman",serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#ffffff 0,#f7f7f5 220px,var(--bg) 220px);
+    }
+    a{color:var(--blue);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter: blur(10px);
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+    .topbar-inner{
+      max-width:var(--max);margin:0 auto;padding:10px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{display:flex;align-items:center;gap:16px;min-width:0}
+    .brand img{display:block;height:46px;width:auto;max-width:min(62vw,320px)}
+    .brand-text{
+      font:700 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:#222;letter-spacing:.01em
+    }
+    .brand-text span{
+      display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px
+    }
+    .nav{display:flex;flex-wrap:wrap;gap:14px}
+    .nav a{
+      font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:#4e4e4e
+    }
+
+    .hero{
+      padding:36px 0 20px;
+      display:grid;grid-template-columns:1.3fr .9fr;gap:22px;
+      align-items:stretch;
+    }
+    .hero-card,.card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-card{padding:28px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 11px;border:1px solid rgba(192,210,45,.45);
+      border-radius:999px;color:#556000;background:rgba(192,210,45,.12);
+      font:700 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    h1{
+      margin:14px 0 12px;
+      font-size:clamp(34px,5vw,58px);
+      line-height:1.01;
+      letter-spacing:-1.1px;
+      font-weight:700
+    }
+    .sub{
+      max-width:66ch;color:#333;font-size:18px;margin:0 0 18px;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .pill{
+      font:600 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:8px 12px;border-radius:999px;border:1px solid var(--line);
+      color:#444;background:#fafaf8
+    }
+    .hero-side{padding:22px;display:grid;gap:14px}
+    .side-head{
+      font:800 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      text-transform:uppercase;letter-spacing:.12em;color:#6a7300
+    }
+    .lede-list{margin:0;padding-left:18px;color:#252525}
+    .lede-list li{margin:.45rem 0}
+    .note{
+      color:var(--muted);
+      font:500 13px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      border-top:1px dashed var(--line);
+      padding-top:12px
+    }
+
+    section{padding:18px 0 6px}
+    .section-head{
+      display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:14px
+    }
+    h2{font-size:28px;letter-spacing:-.5px;margin:0}
+    .section-deck{
+      color:var(--muted);max-width:72ch;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+    }
+
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .stat{padding:18px}
+    .label{
+      font:700 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      text-transform:uppercase;letter-spacing:.08em;color:var(--muted)
+    }
+    .value{
+      font-size:34px;line-height:1;font-weight:800;margin:10px 0 6px;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+    }
+    .desc{
+      color:#343434;
+      font:500 14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+    }
+    .delta{
+      margin-top:10px;
+      font:600 13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--blue)
+    }
+
+    .bars{display:grid;gap:14px}
+    .bar-card{padding:18px}
+    .bar-row{margin:10px 0 0}
+    .bar-top{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+    }
+    .bar-track{
+      height:13px;background:#ecece6;border-radius:999px;overflow:hidden;margin-top:8px
+    }
+    .bar-fill{
+      height:100%;
+      background:linear-gradient(90deg,#768352,#c0d22d);
+      border-radius:999px
+    }
+
+    .stories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .story{padding:20px}
+    .story h3{margin:2px 0 10px;font-size:20px}
+    .why{
+      font:800 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      letter-spacing:.06em;text-transform:uppercase;color:#6a7300;margin-top:14px
+    }
+    .sources{
+      font:500 12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)
+    }
+
+    .explorer{display:grid;grid-template-columns:300px 1fr;gap:16px}
+    .filter-card{padding:18px;position:sticky;top:72px;height:fit-content}
+    .input,.select,textarea{
+      width:100%;background:#fff;color:var(--text);
+      border:1px solid #d8d8d2;border-radius:12px;padding:12px 14px;outline:none;
+      font:500 15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+    }
+    .input:focus,.select:focus,textarea:focus{
+      border-color:#77a9ff;box-shadow:0 0 0 3px rgba(59,130,246,.18)
+    }
+    .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .topic{padding:18px}
+    .topic h3{margin:4px 0 8px;font-size:20px}
+    .topic ul{margin:0;padding-left:18px;color:#252525}
+    .topic li{margin:.32rem 0}
+    .topic .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .tag{
+      font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:6px 9px;border-radius:999px;background:#f2f6ff;border:1px solid #d6e2ff;color:#21498a
+    }
+
+    .chat-wrap{
+      display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start
+    }
+    .chat-config,.chat-card{padding:18px}
+    .chat-log{
+      background:#fcfcfb;border:1px solid var(--line);border-radius:16px;
+      min-height:430px;max-height:62vh;overflow:auto;padding:16px
+    }
+    .msg{padding:12px 14px;border-radius:14px;margin-bottom:12px;max-width:90%}
+    .user{background:#eef4ff;margin-left:auto;border:1px solid #d4e1ff}
+    .assistant{background:#fff;border:1px solid var(--line)}
+    .msg small{display:block;color:var(--muted);margin-bottom:6px}
+    .chat-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}
+    .btn{
+      border:0;border-radius:12px;padding:12px 16px;
+      font:800 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      cursor:pointer;background:linear-gradient(135deg,#66714f,#555756);color:white;box-shadow:var(--shadow)
+    }
+    .btn.secondary{
+      background:#fff;border:1px solid var(--line);color:var(--text);box-shadow:none
+    }
+    .tiny{
+      font:500 12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--muted)
+    }
+
+    .source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .source-item{padding:14px}
+    .kicker{
+      font:800 11px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      letter-spacing:.08em;text-transform:uppercase;color:#6a7300
+    }
+
+    .footer{
+      color:var(--muted);
+      font:500 13px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:30px 0 50px
+    }
+
+    @media (max-width:1080px){
+      .hero,.chat-wrap,.explorer{grid-template-columns:1fr}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .stories{grid-template-columns:1fr 1fr}
+      .topic-grid{grid-template-columns:1fr}
+      .filter-card{position:static}
+    }
+    @media (max-width:820px){
+      .wrap,.topbar-inner{padding:16px}
+      .grid,.stories,.source-list{grid-template-columns:1fr}
+      .nav{display:none}
+      .brand img{height:38px;max-width:62vw}
+      .brand-text{display:none}
+      .hero{padding-top:22px}
+      .hero-card,.chat-card,.chat-config,.filter-card,.story,.topic,.stat,.bar-card{padding:16px}
+      .value{font-size:30px}
+      .chat-row{grid-template-columns:1fr}
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans">
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="njdotcom-logo.jpg" alt="NJ.com True Jersey logo" />
+        <div class="brand-text">New Jersey Budget Briefing<span>Interactive guide and reader Q&amp;A</span></div>
+      </div>
+      <nav class="nav">
+        <a href="#numbers">Big numbers</a>
+        <a href="#bars">Budget bars</a>
+        <a href="#storylines">Storylines</a>
+        <a href="#topics">Topic explorer</a>
+        <a href="#chat">Reader chat</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </div>
+  </header>
 
-    <header class="news-gradient text-white py-10 px-6">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-3xl md:text-5xl font-black tracking-tight mb-2 uppercase">The Sherrill Budget</h1>
-                <p class="text-lg opacity-80">FY 2027 Analysis: "A More Affordable & Accountable New Jersey"</p>
-            </div>
-            <div class="mt-6 md:mt-0 bg-white/10 p-4 rounded-lg border border-white/20 text-center">
-                <span class="block text-4xl font-extrabold">$60.7B</span>
-                <span class="text-xs uppercase font-bold opacity-70">Total Appropriations</span>
-            </div>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Budget in Brief • FY 2027 • New Jersey</div>
+        <h1>What matters most in the governor’s budget</h1>
+        <p class="sub">
+          A reader-friendly guide to the biggest numbers, policy shifts, and political fault lines in the
+          state budget proposal, built for readers who want the fastest path to what matters.
+        </p>
+        <div class="meta">
+          <div class="pill">Appropriations: $60.7B</div>
+          <div class="pill">Revenues: $59.1B</div>
+          <div class="pill">Projected surplus: $5.364B</div>
+          <div class="pill">Property-tax relief: $28.735B</div>
         </div>
-    </header>
+      </div>
 
-    <main class="max-w-6xl mx-auto py-12 px-6">
-        
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 stat-card">
-                <h3 class="text-slate-500 text-xs font-bold uppercase mb-1">Property Tax Relief</h3>
-                <p class="text-3xl font-bold">$4.2 Billion</p>
-                <p class="text-xs text-slate-600 mt-2">Serving 2M+ residents via Stay NJ & ANCHOR [p.10].</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500 stat-card">
-                <h3 class="text-slate-500 text-xs font-bold uppercase mb-1">K-12 Formula Aid</h3>
-                <p class="text-3xl font-bold">$12.4 Billion</p>
-                <p class="text-xs text-slate-600 mt-2">Largest formula aid in state history [p.12].</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500 stat-card">
-                <h3 class="text-slate-500 text-xs font-bold uppercase mb-1">NJ Transit Support</h3>
-                <p class="text-3xl font-bold">$1.05 Billion</p>
-                <p class="text-xs text-slate-600 mt-2">26% increase in direct State support [p.40].</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-rose-500 stat-card">
-                <h3 class="text-slate-500 text-xs font-bold uppercase mb-1">Proposed Cuts</h3>
-                <p class="text-3xl font-bold">$2.0 Billion</p>
-                <p class="text-xs text-slate-600 mt-2">"Tough choices" to fix structural deficit [p.10].</p>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div class="lg:col-span-2 space-y-10">
-                <section>
-                    <h2 class="text-2xl font-bold mb-4 border-b-2 border-slate-200 pb-2">Top Stories & Policy Shifts</h2>
-                    <div class="space-y-6">
-                        <div class="group">
-                            <h3 class="text-xl font-bold group-hover:text-blue-600 transition">Reform to Stay NJ Program</h3>
-                            <p class="text-slate-600 mt-1 leading-relaxed">
-                                Governor Sherrill is proposing strategic reductions to the Stay NJ program to ensure it is "fairer and more efficient." 
-                                The plan introduces a **$250,000 income threshold** and a **$4,000 maximum benefit**, shifting resources toward lower-income seniors [p.10].
-                            </p>
-                        </div>
-                        <div class="group">
-                            <h3 class="text-xl font-bold group-hover:text-blue-600 transition">Youth Safety & Mental Health</h3>
-                            <p class="text-slate-600 mt-1 leading-relaxed">
-                                The budget funds a new **Office of Youth Online Mental Health Safety** and a **Social Media Research Center** ($500k) to combat the "addictive influence" of social media. 
-                                It also prepares districts for the first **cell-phone free school year** [p.11].
-                            </p>
-                        </div>
-                        <div class="group">
-                            <h3 class="text-xl font-bold group-hover:text-blue-600 transition">Closing Tax Loopholes</h3>
-                            <p class="text-slate-600 mt-1 leading-relaxed">
-                                To fund these initiatives, the state will close corporate loopholes and implement a temporary cap on **Net Operating Loss (NOL)** deductions, 
-                                expected to raise **$485 million** from the state's largest corporate filers [p.47].
-                            </p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <aside class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden sticky top-8">
-                    <div class="bg-slate-800 text-white px-5 py-4 flex justify-between items-center">
-                        <span class="font-bold tracking-tight"><i class="fas fa-circle text-emerald-400 text-[10px] mr-2"></i>Budget AI Assistant</span>
-                    </div>
-                    
-                    <div id="chat-window" class="p-5 overflow-y-auto flex flex-col space-y-4">
-                        <div class="ai-msg p-3 text-sm">
-                            Hi! I'm a simple assistant trained on the **FY 2027 Budget**. 
-                            Ask me about **taxes**, **schools**, **transit**, or **housing**.
-                        </div>
-                    </div>
-
-                    <div class="px-5 pb-2 flex flex-wrap gap-1">
-                        <button onclick="quickAsk('tax relief')" class="text-[10px] bg-slate-100 px-2 py-1 rounded hover:bg-slate-200">Tax Relief</button>
-                        <button onclick="quickAsk('transit')" class="text-[10px] bg-slate-100 px-2 py-1 rounded hover:bg-slate-200">NJ Transit</button>
-                        <button onclick="quickAsk('education')" class="text-[10px] bg-slate-100 px-2 py-1 rounded hover:bg-slate-200">Schools</button>
-                        <button onclick="quickAsk('spending cuts')" class="text-[10px] bg-slate-100 px-2 py-1 rounded hover:bg-slate-200">Cuts</button>
-                    </div>
-
-                    <div class="p-4 border-t border-slate-100 bg-slate-50">
-                        <div class="flex items-center bg-white border border-slate-300 rounded-full px-4 py-1">
-                            <input type="text" id="user-input" placeholder="Type a keyword..." class="flex-grow py-2 text-sm focus:outline-none">
-                            <button onclick="handleChat()" class="text-blue-600 hover:text-blue-800 p-2">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+      <aside class="hero-card hero-side">
+        <div class="side-head">Top newsroom angles</div>
+        <ul class="lede-list">
+          <li>Nearly $2 billion in spending cuts paired with targeted new investments.</li>
+          <li>Property-tax relief stays huge, but senior relief is tightened for some higher-income residents.</li>
+          <li>Record school funding remains a central political and local-news storyline.</li>
+          <li>Health-care costs and Medicaid pressure remain major structural risks.</li>
+          <li>NJ Transit support stays a major affordability and mobility story.</li>
+        </ul>
+        <div class="note">
+          This page is built around the uploaded Budget in Brief document and labels it as FY 2027.
         </div>
-    </main>
+      </aside>
+    </section>
 
-    <footer class="bg-slate-900 text-slate-400 py-12 px-6 text-center text-sm">
-        <p>&copy; 2026 State Media Group. All data verified against the FY 2027 Budget in Brief.</p>
-    </footer>
+    <section id="numbers">
+      <div class="section-head">
+        <div>
+          <h2>Big numbers at a glance</h2>
+          <div class="section-deck">The fastest way for readers to understand the scale of the proposal and where the biggest headlines sit.</div>
+        </div>
+      </div>
+      <div class="grid" id="statsGrid"></div>
+    </section>
 
-    <script>
-        // Simple Logic-Based Chat (No API)
-        const budgetData = {
-            "total": "The FY 2027 budget recommends record appropriations totaling $60.7 billion [p.8].",
-            "tax": "Governor Sherrill is providing $4.2 billion in direct property tax relief, including the ANCHOR, Stay NJ, and Senior Freeze programs. Over 2 million residents will benefit [p.10].",
-            "stay nj": "Stay NJ is being reformed with a $250,000 income limit and a $4,000 maximum benefit to prioritize those most in need [p.10].",
-            "education": "The budget allocates $12.4 billion for K-12 formula aid and a record $1.4 billion for Preschool Education Aid—a 9% increase over last year [p.12].",
-            "transit": "NJ Transit will receive over $1 billion in state support, a $215 million increase intended to prevent service cuts [p.40].",
-            "housing": "The budget includes $25 million for rapid re-housing and increases Down Payment Assistance to $45 million to help first-time homebuyers [p.13, 24].",
-            "cuts": "The Governor's plan includes nearly $2 billion in spending cuts to help address New Jersey's long-term structural deficit [p.10].",
-            "pension": "For the first time in decades, a first-year governor is making the full actuarially recommended pension contribution, totaling $7.3 billion [p.12].",
-            "corporate": "The budget closes corporate tax loopholes and places a temporary cap on Net Operating Loss (NOL) deductions, raising roughly $485 million from large corporations [p.47].",
-            "mental health": "New initiatives include SPARK ($33M) for school mental health and the launch of the Office of Youth Online Mental Health Safety [p.11, 31]."
-        };
+    <section id="bars">
+      <div class="section-head">
+        <div>
+          <h2>Budget figures in context</h2>
+          <div class="section-deck">Visual comparisons for major figures readers will ask about first.</div>
+        </div>
+      </div>
+      <div class="bars" id="barsGrid"></div>
+    </section>
 
-        function handleChat() {
-            const input = document.getElementById('user-input');
-            const message = input.value.toLowerCase();
-            if (!message) return;
+    <section id="storylines">
+      <div class="section-head">
+        <div>
+          <h2>Most newsworthy storylines</h2>
+          <div class="section-deck">These are the sections most likely to drive headlines, follow-ups, and accountability reporting.</div>
+        </div>
+      </div>
+      <div class="stories" id="storiesGrid"></div>
+    </section>
 
-            addMessage(input.value, 'user');
-            input.value = '';
+    <section id="topics">
+      <div class="section-head">
+        <div>
+          <h2>Topic explorer</h2>
+          <div class="section-deck">Readers can filter by subject and scan the key figures, stakes, and likely local-news follow-ups.</div>
+        </div>
+      </div>
+      <div class="explorer">
+        <aside class="card filter-card">
+          <label class="label" for="searchInput">Search this page</label>
+          <input class="input" id="searchInput" type="search" placeholder="Search: school aid, Medicaid, housing, transit..." />
+          <div style="height:14px"></div>
+          <label class="label" for="topicSelect">Filter topic</label>
+          <select class="select" id="topicSelect">
+            <option value="all">All topics</option>
+            <option value="taxes">Taxes</option>
+            <option value="education">Education</option>
+            <option value="health">Health care</option>
+            <option value="transit">Transit</option>
+            <option value="housing">Housing</option>
+            <option value="public-safety">Public safety</option>
+          </select>
+          <div style="height:14px"></div>
+          <button class="btn secondary" id="resetFilters">Reset filters</button>
+        </aside>
+        <div class="topic-grid" id="topicGrid"></div>
+      </div>
+    </section>
 
-            setTimeout(() => {
-                let response = "I'm sorry, I don't have specific data on that. Try asking about 'Tax Relief', 'Schools', 'NJ Transit', or 'Cuts'.";
-                
-                // Keyword matching
-                for (let key in budgetData) {
-                    if (message.includes(key)) {
-                        response = budgetData[key];
-                        break;
-                    }
-                }
-                addMessage(response, 'ai');
-            }, 400);
-        }
+    <section id="chat">
+      <div class="section-head">
+        <div>
+          <h2>Ask about the budget</h2>
+          <div class="section-deck">Reader-facing Q&amp;A using the ChatGPT API through a secure proxy endpoint.</div>
+        </div>
+      </div>
+      <div class="chat-wrap">
+        <aside class="card chat-config">
+          <div class="label">Proxy endpoint</div>
+          <input class="input" id="proxyUrl" placeholder="Paste your Worker URL here" />
+          <div style="height:10px"></div>
+          <div class="tiny">
+            Use a server-side proxy or Cloudflare Worker so your API key is never exposed in GitHub Pages.
+          </div>
+        </aside>
+        <div class="card chat-card">
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-row">
+            <textarea id="chatInput" rows="3" placeholder="Ask about school aid, pensions, taxes, Medicaid, housing, or anything else in the budget..."></textarea>
+            <button class="btn" id="sendBtn">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        function quickAsk(text) {
-            document.getElementById('user-input').value = text;
-            handleChat();
-        }
+    <section id="sources">
+      <div class="section-head">
+        <div>
+          <h2>Source notes</h2>
+          <div class="section-deck">What this package is built from and how readers should interpret it.</div>
+        </div>
+      </div>
+      <div class="source-list" id="sourceList"></div>
+    </section>
 
-        function addMessage(text, sender) {
-            const window = document.getElementById('chat-window');
-            const div = document.createElement('div');
-            div.className = sender === 'user' ? 'user-msg p-3 text-sm max-w-[80%]' : 'ai-msg p-3 text-sm max-w-[80%]';
-            div.innerText = text;
-            window.appendChild(div);
-            window.scrollTop = window.scrollHeight;
-        }
+    <div class="footer">
+      Designed as a GitHub Pages-ready NJ.com-style explainer. Place this file alongside <strong>njdotcom-logo.jpg</strong>.
+    </div>
+  </main>
 
-        // Allow Enter key to send
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChat();
+  <script>
+    const stats = [
+      { label: "Total budget", value: "$60.7B", desc: "Proposed appropriations.", delta: "Top-line figure readers search for first." },
+      { label: "Revenues", value: "$59.1B", desc: "Estimated resources supporting the plan.", delta: "Key measure of one-year balance." },
+      { label: "Surplus", value: "$5.364B", desc: "Projected ending surplus.", delta: "Important cushion, but still politically debated." },
+      { label: "Property-tax relief", value: "$28.735B", desc: "Affordability support across major programs.", delta: "Central message of the budget." },
+      { label: "Pension contribution", value: "$7.3B", desc: "Full annual pension payment.", delta: "A recurring fiscal benchmark." },
+      { label: "School funding", value: "$12B+", desc: "K-12 and related education support.", delta: "High local-news relevance statewide." },
+      { label: "NJ Transit support", value: "$1B+", desc: "Major state support for operations and system stability.", delta: "Daily commuter impact." },
+      { label: "Spending cuts", value: "$2B", desc: "Proposed reductions used to frame restraint.", delta: "Core political framing point." }
+    ];
+
+    const barData = [
+      { label: "Property-tax relief", amount: 28.735, total: 60.7, note: "$28.735B of a $60.7B budget" },
+      { label: "Pension contribution", amount: 7.3, total: 60.7, note: "$7.3B pension payment" },
+      { label: "Projected surplus", amount: 5.364, total: 60.7, note: "$5.364B ending surplus" },
+      { label: "Approx. spending cuts", amount: 2.0, total: 60.7, note: "About $2B in reductions" }
+    ];
+
+    const stories = [
+      {
+        title: "Austerity with selective expansion",
+        body: "The proposal leans on roughly $2 billion in spending reductions while preserving or expanding politically sensitive priorities like school aid, pensions, transit, and property-tax relief.",
+        why: "This is the central governing frame and likely the lead for statewide coverage.",
+        source: "Budget narrative and summary framing."
+      },
+      {
+        title: "School funding remains a headline issue",
+        body: "Education stays one of the clearest local-reporting entry points because district-by-district follow-ups and school-aid reaction stories can flow directly from the budget.",
+        why: "Readers care immediately when school budgets, class sizes, or local tax implications are at stake.",
+        source: "Education sections and major funding tables."
+      },
+      {
+        title: "Affordability remains the political message",
+        body: "Property-tax relief, senior supports, and household cost themes are central to the package’s public pitch, even as details matter for who benefits and how much.",
+        why: "This is likely to dominate audience-facing headlines and social traffic.",
+        source: "Affordability and relief program sections."
+      },
+      {
+        title: "Health care remains a pressure point",
+        body: "Medicaid and health-care cost pressure are among the more consequential long-term fiscal challenges inside the budget.",
+        why: "This shapes sustainability questions and deeper accountability follow-ups.",
+        source: "Health and Medicaid narrative sections."
+      },
+      {
+        title: "Transit funding carries daily real-world stakes",
+        body: "NJ Transit support is not just a budget line. It translates directly to reliability, service, and commuter politics.",
+        why: "Readers feel this one in everyday life and it broadens beyond Trenton coverage.",
+        source: "Transit-related appropriations and narrative."
+      },
+      {
+        title: "Pension payment remains a benchmark of discipline",
+        body: "The full pension contribution remains both a fiscal achievement talking point and a reminder of the state’s long-term obligations.",
+        why: "It is one of the most durable year-over-year budget storylines.",
+        source: "Pension and debt narrative."
+      }
+    ];
+
+    const topics = [
+      {
+        category: "taxes",
+        title: "Property taxes and relief",
+        summary: "The affordability section is among the most audience-friendly parts of the budget, with direct household impact and broad political salience.",
+        bullets: [
+          "Property-tax relief remains one of the biggest budget messages.",
+          "Readers will want to know who qualifies, how much relief is available, and what changes from prior years.",
+          "This is fertile ground for service journalism and accountability reporting."
+        ],
+        tags: ["ANCHOR", "Stay NJ", "Affordability"]
+      },
+      {
+        category: "education",
+        title: "School aid and pre-K",
+        summary: "Education is the easiest bridge from statewide budget coverage to local follow-up stories.",
+        bullets: [
+          "School funding has immediate district-level implications.",
+          "Pre-K expansion and school support remain major talking points.",
+          "Local superintendents, school boards, and lawmakers will react quickly."
+        ],
+        tags: ["School aid", "Pre-K", "District impact"]
+      },
+      {
+        category: "health",
+        title: "Medicaid and health care",
+        summary: "Health-care costs are one of the major structural pressures in the budget.",
+        bullets: [
+          "Medicaid spending pressure shapes long-term sustainability questions.",
+          "Hospital and provider concerns often drive follow-up reporting.",
+          "Federal policy changes can intensify the risk profile."
+        ],
+        tags: ["Medicaid", "Hospitals", "Budget pressure"]
+      },
+      {
+        category: "transit",
+        title: "NJ Transit and mobility",
+        summary: "Transit funding remains a high-interest statewide quality-of-life issue.",
+        bullets: [
+          "This affects daily commuters and major economic corridors.",
+          "Readers want clarity on service, reliability, and operating support.",
+          "Transit is both a budget story and an infrastructure story."
+        ],
+        tags: ["NJ Transit", "Commuters", "Infrastructure"]
+      },
+      {
+        category: "housing",
+        title: "Housing and development",
+        summary: "Housing-related items matter to affordability, growth, and local politics.",
+        bullets: [
+          "Housing affordability remains a broad concern in New Jersey.",
+          "Budget choices can affect incentives, development, and support programs.",
+          "Good area for localizing statewide policy."
+        ],
+        tags: ["Housing", "Affordability", "Development"]
+      },
+      {
+        category: "public-safety",
+        title: "Public safety and justice",
+        summary: "Public safety items often draw both political attention and local newsroom follow-ups.",
+        bullets: [
+          "Funding choices shape staffing, grants, and enforcement priorities.",
+          "Lawmakers and county officials often use these items to define broader narratives.",
+          "This section works well for county-by-county localized reporting."
+        ],
+        tags: ["Public safety", "Courts", "Local impact"]
+      }
+    ];
+
+    const sources = [
+      {
+        label: "Primary source",
+        title: "Governor’s Budget in Brief",
+        body: "This package is built from the uploaded New Jersey budget PDF and is designed as a reader-facing editorial guide.",
+      },
+      {
+        label: "Editorial note",
+        title: "Newsroom framing",
+        body: "The page emphasizes the most newsworthy and serviceable angles rather than reproducing the budget line by line.",
+      },
+      {
+        label: "Reader note",
+        title: "Q&A tool",
+        body: "The chat box is designed for a secure server-side proxy. Do not place an OpenAI API key directly in client-side code.",
+      },
+      {
+        label: "Publishing note",
+        title: "GitHub Pages setup",
+        body: "Publish this file with the NJ.com logo file in the same directory for a simple static deployment.",
+      }
+    ];
+
+    const systemPrompt = `
+You are an NJ.com budget explainer assistant.
+Answer reader questions about the New Jersey state budget in a concise, plain-English way.
+Stay grounded in these known figures and themes:
+- Total budget: $60.7B
+- Revenues: $59.1B
+- Projected surplus: $5.364B
+- Property-tax relief: $28.735B
+- Pension contribution: $7.3B
+- Major themes: affordability, school funding, pensions, transit, Medicaid pressure, spending cuts
+If a question asks for a figure not clearly in the page data, say that the reader should consult the full budget document or a newsroom follow-up.
+Do not invent line items.
+`.trim();
+
+    function renderStats() {
+      const el = document.getElementById("statsGrid");
+      el.innerHTML = stats.map(item => `
+        <article class="card stat">
+          <div class="label">${item.label}</div>
+          <div class="value">${item.value}</div>
+          <div class="desc">${item.desc}</div>
+          <div class="delta">${item.delta}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderBars() {
+      const el = document.getElementById("barsGrid");
+      el.innerHTML = barData.map(item => {
+        const pct = Math.max(2, Math.min(100, (item.amount / item.total) * 100));
+        return `
+          <article class="card bar-card">
+            <div class="label">${item.label}</div>
+            <div class="bar-row">
+              <div class="bar-top">
+                <strong>${item.amount.toFixed(3).replace(/\.?0+$/,'')}B</strong>
+                <span>${pct.toFixed(1)}% of budget</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+              <div class="desc" style="margin-top:10px">${item.note}</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderStories() {
+      const el = document.getElementById("storiesGrid");
+      el.innerHTML = stories.map(item => `
+        <article class="card story">
+          <h3>${item.title}</h3>
+          <div class="desc">${item.body}</div>
+          <div class="why">Why it matters</div>
+          <div class="desc">${item.why}</div>
+          <div class="sources">${item.source}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderTopics() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const cat = document.getElementById("topicSelect").value;
+      const filtered = topics.filter(item => {
+        const haystack = [
+          item.category,
+          item.title,
+          item.summary,
+          ...item.bullets,
+          ...item.tags
+        ].join(" ").toLowerCase();
+        const catOk = cat === "all" || item.category === cat;
+        const qOk = !q || haystack.includes(q);
+        return catOk && qOk;
+      });
+
+      const el = document.getElementById("topicGrid");
+      if (!filtered.length) {
+        el.innerHTML = `<article class="card topic"><h3>No matches</h3><div class="desc">Try a broader search or reset the filters.</div></article>`;
+        return;
+      }
+
+      el.innerHTML = filtered.map(item => `
+        <article class="card topic">
+          <div class="label">${item.category.replace("-", " ")}</div>
+          <h3>${item.title}</h3>
+          <div class="desc">${item.summary}</div>
+          <ul>${item.bullets.map(b => `<li>${b}</li>`).join("")}</ul>
+          <div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderSources() {
+      const el = document.getElementById("sourceList");
+      el.innerHTML = sources.map(item => `
+        <article class="card source-item">
+          <div class="kicker">${item.label}</div>
+          <h3 style="margin:8px 0 8px;font-size:18px">${item.title}</h3>
+          <div class="desc">${item.body}</div>
+        </article>
+      `).join("");
+    }
+
+    function addMessage(role, text) {
+      const log = document.getElementById("chatLog");
+      const div = document.createElement("div");
+      div.className = `msg ${role}`;
+      div.innerHTML = `<small>${role === "user" ? "You" : "Budget bot"}</small>${escapeHtml(text).replace(/\n/g,"<br>")}`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function sendChat() {
+      const input = document.getElementById("chatInput");
+      const proxy = document.getElementById("proxyUrl").value.trim();
+      const question = input.value.trim();
+
+      if (!question) return;
+      if (!proxy) {
+        addMessage("assistant", "Add your Cloudflare Worker or other proxy URL first.");
+        return;
+      }
+
+      addMessage("user", question);
+      input.value = "";
+      addMessage("assistant", "Thinking...");
+
+      try {
+        const log = document.getElementById("chatLog");
+        const thinkingNode = log.lastElementChild;
+
+        const response = await fetch(proxy, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "gpt-5-mini",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: question }
+            ]
+          })
         });
-    </script>
+
+        const data = await response.json();
+        const answer = data.output_text || data.answer || data.error || "No response returned.";
+
+        thinkingNode.remove();
+        addMessage("assistant", answer);
+      } catch (err) {
+        const log = document.getElementById("chatLog");
+        const thinkingNode = log.lastElementChild;
+        if (thinkingNode) thinkingNode.remove();
+        addMessage("assistant", `Error: ${err.message}`);
+      }
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", sendChat);
+    document.getElementById("chatInput").addEventListener("keydown", e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendChat();
+    });
+    document.getElementById("searchInput").addEventListener("input", renderTopics);
+    document.getElementById("topicSelect").addEventListener("change", renderTopics);
+    document.getElementById("resetFilters").addEventListener("click", () => {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("topicSelect").value = "all";
+      renderTopics();
+    });
+
+    renderStats();
+    renderBars();
+    renderStories();
+    renderTopics();
+    renderSources();
+    addMessage("assistant", "Ask a question about the New Jersey budget after you add your proxy URL.");
+  </script>
 </body>
 </html>
